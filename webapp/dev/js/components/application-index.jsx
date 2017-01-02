@@ -5,6 +5,7 @@ import * as Colors from 'material-ui/styles/colors';
 import {VeryNarrowLayout, CenteredDiv, JustifiedDiv} from "../utils/styling";
 import RaisedButton from 'material-ui/RaisedButton';
 import TextFieldExampleSimple from './search-text-fields'
+import CategoryExample from './category-example';
 
 const style = {
     width: '100%'
@@ -21,7 +22,10 @@ const Code = ({children}) => (<font style={codeStyle}>{children}</font>);
 
 const ApplicationIndex = ({userLogged, handler}) => {
     return (
+        <div>
        <TextFieldExampleSimple />
+    <CategoryExample category="Category I"/>
+            </div>
     );
 };
 
