@@ -1,0 +1,11 @@
+{
+  "name": "oragella server",
+  "version": "0.0.1",
+  "description": "oragella server",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mysql": "^2.12.0",
+    "socket.io": "^1.7.2",
+    "socket.io-client": "^1.7.2"
+  }
+}
