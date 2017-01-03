@@ -24,13 +24,13 @@ class UserList extends Component {
 
 
     render() {
-        this.props.foo.on('new message', function(data){
-            console.log(data.msg);
-            console.log(data.res);
-        });
-        this.props.foo.on('new new', function(data){
-            console.log(data.msg);
-        });
+        // this.props.foo.on('new message', function(data){
+        //     console.log(data.msg);
+        //     console.log(data.res);
+        // });
+        // this.props.foo.on('new new', function(data){
+        //     console.log(data.msg);
+        // });
 
         // console.log("@@@ sendeing ");
 

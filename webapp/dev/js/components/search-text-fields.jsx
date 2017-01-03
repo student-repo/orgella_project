@@ -4,27 +4,10 @@ import AutoComplete from 'material-ui/AutoComplete';
 import Button from 'react-bootstrap/lib/Button'
 import * as buttonStyle from '../../scss/main.css'
 
-const styles = {
-    button: {
-        margin: 12,
-    },
-    exampleImageInput: {
-        cursor: 'pointer',
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0,
-        width: '100%',
-        opacity: 0,
-    },
-};
-
 
 const style = {
     margin: 12,
 };
-// var style = {"marginRight": "20px" };
 const colors = [
         'Red',
         'Orange',
@@ -42,23 +25,27 @@ const colors = [
 const TextFieldExampleSimple = () => (
     <div>
             <AutoComplete
-                floatingLabelText="Product name"
+                floatingLabelText="Product Name"
                 filter={AutoComplete.caseInsensitiveFilter}
                 dataSource={colors}
                 style={style}
+                hintText="Product Name Filed"
             />
             <AutoComplete
                 floatingLabelText="Category"
+                hintText="Category Field"
                 filter={AutoComplete.caseInsensitiveFilter}
                 dataSource={colors}
                 style={style}
             />
         <TextField
-            floatingLabelText="Price from"
+            floatingLabelText="Price From"
+            hintText="Price From Filed"
             style={style}
         />
         <TextField
             floatingLabelText="Price to"
+            hintText="Price To Filed"
             style={style}
         />
         <Button style={buttonStyle} onClick={() => console.log("it works")}>Search</Button>

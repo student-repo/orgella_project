@@ -2,8 +2,8 @@ import React from 'react';
 import UserList from '../containers/user-list';
 import UserDetails from '../containers/user-detail';
 require('../../scss/style.scss');
-import io from 'socket.io-client';
-var socket = io.connect('http://localhost:3200/');
+// import io from 'socket.io-client';
+// var socket = io.connect('http://localhost:3200/');
 
 const App = () => (
     <div>

@@ -15,7 +15,7 @@ export default function (state = null, action) {
             //     console.log(data.res);
             // });
             // socket.emit('new user', {asd: "ssds"});
-            console.log("EMIT !!! EMIT !!!");
+            // console.log("EMIT !!! EMIT !!!");
             return action.payload;
             break;
     }
