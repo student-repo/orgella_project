@@ -5,7 +5,7 @@ module.exports = {
     devServer: {
         inline: true,
         contentBase: './src',
-        port: 3001
+        port: 3002
     },
     devtool: 'cheap-module-eval-source-map',
     entry: './dev/js/index.jsx',
@@ -30,7 +30,7 @@ module.exports = {
                     cacheDirectory: true,
                     presets: ['react', 'es2015']
                 }
-            }
+            },
         ]
     },
     output: {

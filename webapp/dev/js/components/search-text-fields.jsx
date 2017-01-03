@@ -1,12 +1,8 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
-import RaisedButton from 'material-ui/RadioButton';
-import {Row, Col} from "pui-react-grids";
-import FontIcon from 'material-ui/FontIcon';
-import * as Colors from 'material-ui/styles/colors';
-import * as C from 'react-toolbox/lib/_colors.scss';
-
+import Button from 'react-bootstrap/lib/Button'
+import * as buttonStyle from '../../scss/main.css'
 
 const styles = {
     button: {
@@ -25,8 +21,10 @@ const styles = {
 };
 
 
-
-var style = {"marginRight": "20px" };
+const style = {
+    margin: 12,
+};
+// var style = {"marginRight": "20px" };
 const colors = [
         'Red',
         'Orange',
@@ -61,10 +59,12 @@ const TextFieldExampleSimple = () => (
         />
         <TextField
             floatingLabelText="Price to"
+            style={style}
         />
-
-
+        <Button style={buttonStyle} onClick={() => console.log("it works")}>Search</Button>
     </div>
 );
 
 export default TextFieldExampleSimple;
+
+// <Button bsStyle="success">Primary</Button>

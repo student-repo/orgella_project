@@ -1,7 +1,6 @@
 import HomeIcon from "material-ui/svg-icons/action/home"
-import ConfigsIcon from "material-ui/svg-icons/action/build"
-import JobsIcon from "material-ui/svg-icons/action/assessment"
-import SnapshotsIcon from "material-ui/svg-icons/action/assignment-turned-in"
-import DiffsIcon from "material-ui/svg-icons/action/bug-report"
+import RegisterIcon from "material-ui/svg-icons/social/person-add"
+import AddOfferIcon from "material-ui/svg-icons/content/add-circle"
+import MyAccountIcon from "material-ui/svg-icons/action/account-box"
 
-export {HomeIcon, ConfigsIcon, JobsIcon, SnapshotsIcon, DiffsIcon};
+export {HomeIcon, RegisterIcon, AddOfferIcon, MyAccountIcon};

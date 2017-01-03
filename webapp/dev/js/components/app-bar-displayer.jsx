@@ -7,7 +7,7 @@ import NavigationMenu from "material-ui/svg-icons/navigation/menu";
 import MenuItem from "material-ui/MenuItem";
 import {Link, withRouter} from "react-router";
 import {Col} from "pui-react-grids";
-import {HomeIcon, ConfigsIcon, JobsIcon, SnapshotsIcon, DiffsIcon} from "../utils/icons"
+import {HomeIcon, RegisterIcon, AddOfferIcon, MyAccountIcon} from "../utils/icons"
 import Divider from 'material-ui/Divider';
 
 class ApplicationBarDisplayer extends Component {
@@ -32,19 +32,21 @@ class ApplicationBarDisplayer extends Component {
                             <MenuItem
                                 primaryText="Home"
                                 leftIcon={<HomeIcon />}
+                                onTouchTap={() => router.push('/')}
 
                             />
                             <MenuItem
-                                primaryText="Add offer"
-                                leftIcon={<ConfigsIcon />}
+                                primaryText="My account"
+                                leftIcon={<MyAccountIcon />}
                             />
                             <MenuItem
-                                primaryText="My account"
-                                leftIcon={<JobsIcon />}
+                                primaryText="Add offer"
+                                leftIcon={<AddOfferIcon />}
                             />
                             <MenuItem
                                 primaryText="Register"
-                                leftIcon={<SnapshotsIcon />}
+                                leftIcon={<RegisterIcon />}
+                                onTouchTap={() => router.push('/register')}
                             />
                             <Divider />
                             <MenuItem
