@@ -1,6 +1,8 @@
 import {combineReducers} from 'redux';
 import UserReducer from './reducer-users';
 import ActiveUserReducer from './reducer-active-user';
+import RegisterStatusReducer from './reducer-register-status';
+import RegisterTextFieldsContentReducer from './reducer-register-text-field-content';
 import { routerReducer } from 'react-router-redux';
 
 /*
@@ -11,6 +13,8 @@ import { routerReducer } from 'react-router-redux';
 const allReducers = combineReducers({
     users: UserReducer,
     activeUser: ActiveUserReducer,
+    RegisterStatus: RegisterStatusReducer,
+    RegisterTextFieldsContent: RegisterTextFieldsContentReducer,
     routing: routerReducer
 });
 

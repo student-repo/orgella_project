@@ -14,7 +14,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import * as Colors from 'material-ui/styles/colors';
 import Button from 'react-bootstrap/lib/Button'
-import * as buttonStyle from '../../scss/main.css'
+import * as buttonStyle from '../../scss/simple-button-css.css'
 
 const codeStyle = {
     fontFamily: 'Courier New',

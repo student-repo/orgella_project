@@ -2,7 +2,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
 import Button from 'react-bootstrap/lib/Button'
-import * as buttonStyle from '../../scss/main.css'
+import * as buttonStyle from '../../scss/simple-button-css.css'
 
 
 const style = {
