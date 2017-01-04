@@ -5,13 +5,10 @@ import {Router, Route, browserHistory, IndexRoute} from "react-router";
 import {syncHistoryWithStore} from 'react-router-redux'
 import thunk from 'redux-thunk';
 import promise from 'redux-promise';
-// import allReducers from '../reducers';
 import allReducers from '../reducers/reductor';
 import createLogger from 'redux-logger';
-import App from '../components/App';
 import ApplicationBar from './application-bar'
 import ApplicationIndex from '../components/application-index'
-import RegisterRoutes from '../components/register-route'
 import io from 'socket.io-client';
 import Registration from '../components/registration'
 import SignIn from '../components/sign-in'
