@@ -9,10 +9,6 @@ import {bindActionCreators} from 'redux';
 import {registerStatus} from '../actions/register-status-action'
 import {registerTextFieldContent} from '../actions/register-textfields-content'
 import RegistrationTextField from './register-text-field'
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { routerMiddleware, push } from 'react-router-redux'
-// import allReducers from '../reducers';
-
 
 const codeStyle = {
     fontFamily: 'Courier New',
@@ -21,15 +17,6 @@ const codeStyle = {
     borderRadius: '6px',
     fontSize: '40px'
 };
-// const middleware = routerMiddleware(browserHistory)
-// const store = createStore(
-//     allReducers,
-//     applyMiddleware(middleware)
-// );
-//
-// Dispatch from anywhere like normal.
-// store.dispatch(push('/'))
-
 
 const checkCustomerIntputWithDatabase = (socket,registerStatus, registerData) => {
     socket.emit('REGISTER_DATA',registerData);
@@ -40,7 +27,6 @@ const checkCustomerIntputWithDatabase = (socket,registerStatus, registerData) =>
         else{
             console.log("register not succesfull !!!");
             browserHistory.push('/register');
-            // store.dispatch(push('/register'));
         }
     });
     registerStatus(true);

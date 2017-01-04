@@ -1,8 +1,7 @@
 import React from "react";
 import ApplicationBarDisplayer from './app-bar-displayer'
 
-const ApplicationBar = ({children, alibaba, socket}) => {
-    console.log(alibaba);
+const ApplicationBar = ({children, socket}) => {
     return (
             <ApplicationBarDisplayer socket={socket}>
                 {children}

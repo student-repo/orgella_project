@@ -12,7 +12,9 @@ import ApplicationIndex from '../components/application-index'
 import io from 'socket.io-client';
 import Registration from '../components/registration'
 import SignIn from '../components/sign-in'
-import RegisterSuccessFullyRoutes from '../components/register-successfully-route'
+import RegisterSuccessFullyRoutes from './register-successfully-routes'
+import SignInSuccessfullyRoutes from './sign-in-successfully-routes'
+import SignInFailuteRoutes from './sign-in-failure-routes'
 
 
 var socket = io.connect('http://localhost:3200/');
@@ -25,7 +27,7 @@ const store = createStore(
 );
 const ApplicationBarWithProps = ({children}) => {
     return (
-        <ApplicationBar alibaba="hello alibaba" socket={socket}>
+        <ApplicationBar socket={socket}>
             {children}
             </ApplicationBar>
     )
@@ -33,7 +35,7 @@ const ApplicationBarWithProps = ({children}) => {
 
 const RegisterRoutesWithProps =(
         <Route path="register">
-            <IndexRoute component={() => <Registration alibaba2="hello alibaba2" socket={socket}/>}/>
+            <IndexRoute component={() => <Registration socket={socket}/>}/>
         </Route>
     );
 
@@ -54,6 +56,8 @@ const PageApp = () => (
                 {RegisterRoutesWithProps}
                 {RegisterSuccessFullyRoutes}
                 {SignInWithProps}
+                {SignInSuccessfullyRoutes}
+                {SignInFailuteRoutes}
 
             </Route>
         </Router>
