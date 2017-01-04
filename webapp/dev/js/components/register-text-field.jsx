@@ -60,7 +60,7 @@ const RegistrationTextField = ({type, labelText, hintText, registerTextFieldCont
 
 function mapStateToProps(state) {
     return {
-        registerTextFieldContent: state.RegisterTextFieldsContent
+        registerTextFieldContent: state.display.RegisterTextFieldsContent
     };
 }
 

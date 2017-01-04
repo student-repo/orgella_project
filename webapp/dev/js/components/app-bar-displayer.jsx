@@ -106,7 +106,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
 
 function mapStateToProps(state) {
     return {
-        userLoggedStat: state.UserLogged
+        userLoggedStat: state.display.UserLogged
     };
 }
 

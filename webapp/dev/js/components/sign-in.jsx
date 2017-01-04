@@ -137,7 +137,7 @@ const SignIn = ({socket, registerStat, registerStatus, signInTextFieldContentUpd
 
 function mapStateToProps(state) {
     return {
-        TextFieldsContent: state.SignInTextFieldsContent
+        TextFieldsContent: state.display.SignInTextFieldsContent
     };
 }
 

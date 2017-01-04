@@ -10,12 +10,6 @@
 export default function (state = null, action) {
     switch (action.type) {
         case 'USER_SELECTED':
-            // socket.on('new message', function(data){
-            //     console.log(data.msg);
-            //     console.log(data.res);
-            // });
-            // socket.emit('new user', {asd: "ssds"});
-            // console.log("EMIT !!! EMIT !!!");
             return action.payload;
             break;
     }

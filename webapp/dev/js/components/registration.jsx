@@ -11,7 +11,7 @@ import {registerTextFieldContent} from '../actions/register-textfields-content'
 import RegistrationTextField from './register-text-field'
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { routerMiddleware, push } from 'react-router-redux'
-import allReducers from '../reducers';
+// import allReducers from '../reducers';
 
 
 const codeStyle = {
@@ -123,7 +123,7 @@ const Registration = ({socket, registerStat, registerStatus, registerTextFieldCo
 function mapStateToProps(state) {
     return {
         registerStat: state.display.RegisterStatus,
-        registerTextFieldContent: state.RegisterTextFieldsContent
+        registerTextFieldContent: state.display.RegisterTextFieldsContent
     };
 }
 
