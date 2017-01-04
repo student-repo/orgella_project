@@ -5,6 +5,8 @@ import RegisterStatusReducer from './reducer-register-status';
 import RegisterTextFieldsContentReducer from './reducer-register-text-field-content';
 import UserLogged from './user-logged-reducer';
 import UserKeys from './user-keys-reducer';
+import LoginDialogShow from './login-dialog-show-reducer';
+import SignInTextFieldsContentReducer from './sign-in-text-field-reducer';
 import { routerReducer } from 'react-router-redux';
 
 /*
@@ -19,6 +21,8 @@ const allReducers = combineReducers({
     RegisterTextFieldsContent: RegisterTextFieldsContentReducer,
     UserLogged: UserLogged,
     UserKeys: UserKeys,
+    LoginDialogShow: LoginDialogShow,
+    SignInTextFieldsContent: SignInTextFieldsContentReducer,
     routing: routerReducer
 });
 

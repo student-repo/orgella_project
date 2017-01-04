@@ -13,6 +13,7 @@ import ApplicationIndex from '../components/application-index'
 import RegisterRoutes from '../components/register-route'
 import io from 'socket.io-client';
 import Registration from '../components/registration'
+import SignIn from '../components/sign-in'
 import RegisterSuccessFullyRoutes from '../components/register-successfully-route'
 
 
@@ -38,6 +39,12 @@ const RegisterRoutesWithProps =(
         </Route>
     );
 
+const SignInWithProps =(
+    <Route path="sign-in">
+        <IndexRoute component={() => <SignIn socket={socket}/>}/>
+    </Route>
+);
+
 
 const enhancedHistory = syncHistoryWithStore(browserHistory, store);
 
@@ -48,6 +55,7 @@ const PageApp = () => (
                 <IndexRoute component={() => (<ApplicationIndex />)}/>
                 {RegisterRoutesWithProps}
                 {RegisterSuccessFullyRoutes}
+                {SignInWithProps}
 
             </Route>
         </Router>

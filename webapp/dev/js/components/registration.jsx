@@ -21,13 +21,12 @@ const codeStyle = {
     borderRadius: '6px',
     fontSize: '40px'
 };
-
 // const middleware = routerMiddleware(browserHistory)
 // const store = createStore(
 //     allReducers,
 //     applyMiddleware(middleware)
 // );
-
+//
 // Dispatch from anywhere like normal.
 // store.dispatch(push('/'))
 
@@ -123,7 +122,7 @@ const Registration = ({socket, registerStat, registerStatus, registerTextFieldCo
 
 function mapStateToProps(state) {
     return {
-        registerStat: state.RegisterStatus,
+        registerStat: state.display.RegisterStatus,
         registerTextFieldContent: state.RegisterTextFieldsContent
     };
 }
