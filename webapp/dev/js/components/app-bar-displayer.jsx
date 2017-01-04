@@ -32,24 +32,32 @@ const cookieSignIn = (socket, usrlog,fff) => {
                 if(fff !== true){
                     usrlog(true);
                 }
-                // usrlog(true);
             }
             else{
                 if(fff !== false){
                     usrlog(false);
                 }
-                // usrlog(false);
             }
         });
     }
 };
 
-    const handleSignOut = (UserLogged) => {
+    const handleSignOut = (UserLogged, router) => {
         cookie.remove('nick');
         cookie.remove('password');
         UserLogged(false);
+        router.push('/');
         // browserHistory.push('/register');
     };
+
+const handleAddOffer = (router, UserLogged) => {
+    if(UserLogged){
+        router.push('/add-offer')
+    }else{
+        router.push('/add-offer-not-allowed')
+    }
+
+};
 
 const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, UserLogged}) => {
     // console.log(TextFieldsContent);
@@ -81,6 +89,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
                         <MenuItem
                             primaryText="Add offer"
                             leftIcon={<AddOfferIcon />}
+                            onTouchTap={() => handleAddOffer(router, userLoggedStat)}
                         />
                         <MenuItem
                             primaryText="Register"
@@ -92,7 +101,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
                             userLoggedStat ? <MenuItem
                                 primaryText="Sign out"
                                 leftIcon={<SignOutIcon />}
-                                onTouchTap={() => handleSignOut(UserLogged)}
+                                onTouchTap={() => handleSignOut(UserLogged, router)}
                             /> :
                                 <MenuItem
                                     primaryText="Sign in"

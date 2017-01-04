@@ -12,9 +12,12 @@ import ApplicationIndex from '../components/application-index'
 import io from 'socket.io-client';
 import Registration from '../components/registration'
 import SignIn from '../components/sign-in'
-import RegisterSuccessFullyRoutes from './register-successfully-routes'
-import SignInSuccessfullyRoutes from './sign-in-successfully-routes'
-import SignInFailuteRoutes from './sign-in-failure-routes'
+import RegisterSuccessFullyRoutes from '../routes/register-successfully-routes'
+import SignInSuccessfullyRoutes from '../routes/sign-in-successfully-routes'
+import SignInFailuteRoutes from '../routes/sign-in-failure-routes'
+import AddOffer from './add-offer';
+import AddOfferSuccessfullyRoutes from '../routes/add-offer-successfully-routes';
+import AddOfferNotAllowedRoutes from '../routes/add-offer-not-alloved-routes';
 
 
 var socket = io.connect('http://localhost:3200/');
@@ -45,6 +48,12 @@ const SignInWithProps =(
     </Route>
 );
 
+const AddOfferWithProps =(
+    <Route path="add-offer">
+        <IndexRoute component={() => <AddOffer socket={socket}/>}/>
+    </Route>
+);
+
 
 const enhancedHistory = syncHistoryWithStore(browserHistory, store);
 
@@ -58,6 +67,9 @@ const PageApp = () => (
                 {SignInWithProps}
                 {SignInSuccessfullyRoutes}
                 {SignInFailuteRoutes}
+                {AddOfferWithProps}
+                {AddOfferSuccessfullyRoutes}
+                {AddOfferNotAllowedRoutes}
 
             </Route>
         </Router>

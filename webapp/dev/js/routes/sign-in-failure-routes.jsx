@@ -1,6 +1,6 @@
 import React from "react";
 import {Route, IndexRoute, Link} from "react-router";
-import SimpleInfoPage from './simple-info-page'
+import SimpleInfoPage from '../components/simple-info-page'
 
 const SignInFailuteRoutes = (
     <Route path="sign-in-failure">

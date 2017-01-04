@@ -17,6 +17,7 @@ var connection = mysql.createConnection({
 
 var foo;
 
+
 connection.connect();
 connection.query('select * from users', function(err, result){
     foo = result;
@@ -57,6 +58,36 @@ io.on('connection', function(socket){
         // io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
     });
 
+
+    socket.on('ADD_OFFER_DATA', function(data){
+        console.log(data);
+        connection.query('select UserID from users where Nick=?',data.UserNick, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
+                return;
+            }
+            var aaaaaa = {
+                SellerID: result[0].UserID,
+                ProductName: data.ProductName,
+                Category: data.Category,
+                Description: data.Description,
+                Price: data.Price,
+                ProductQuantity: data.ProductQuantity
+            };
+            var query = connection.query('insert into offers set ?', aaaaaa, function(err, result){
+                if(err){
+                    console.error(err);
+                    io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
+                    return;
+                }
+                console.error(err);
+                io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_SUCCESSFUL"});
+            });
+        });
+    });
+
+
     socket.on('TRY_SIGN_IN', function(data){
         console.log(data);
         connection.query('select Password, PasswordSalt from users where Nick=?',data.nick, function(err, result){
@@ -80,20 +111,7 @@ io.on('connection', function(socket){
 
 
             }
-            // console.log(result[0]);
-            // console.log(data.password);
-            // console.log(result[0].PasswordSalt);
-            // console.log(data.password + result[0].PasswordSalt);
-            // console.log(md5(data.password + result[0].PasswordSalt));
-            // console.log(result);
-            // console.log(result.length);
-            // io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFUL"});
-
         });
-
-        //
-        // io.sockets.emit('new message', {msg: "message, its working my gentleman",
-        //     res: foo});
     });
 
     socket.on('CHECK_COOKIE_IDENTITY_DATA', function(data){

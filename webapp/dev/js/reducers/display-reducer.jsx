@@ -16,6 +16,14 @@ export const initialDisplayReducer = {
         nick: '',
         password: ''
     },
+    AddOfferTextFieldsContent: {
+        ProductName: '',
+        Category: '',
+        Description: '',
+        Price: '',
+        ProductQuantity: ''
+    },
+    AddOfferStatus: false
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -34,6 +42,12 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'USER_LOGGED':
             return {...displayState, UserLogged: action.payload};
+
+        case 'ADD_OFFER_TEXT_FIELD_CONTENT':
+            return {...displayState, AddOfferTextFieldsContent: action.payload};
+
+        case 'ADD_OFFER_STATUS':
+            return {...displayState, AddOfferStatus: action.payload};
 
         default:
             return displayState;
