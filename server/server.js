@@ -33,7 +33,25 @@ io.on('connection', function(socket){
     });
 
     socket.on('REGISTER_DATA', function(data){
-        io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
+        console.log(data);
+        var aaa = {
+            Nick: data.nick,
+            FirstName: data.firstName,
+            LastName: data.lastName,
+            Password: data.password,
+            PasswordSalt: "passwordSalt",
+            Address: data.address
+        };
+        var query = connection.query('insert into users set ?', aaa, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_NOT_SUCCESSFUL"});
+                return;
+            }
+            console.error(err);
+            io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
+        });
+        // io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
     })
 });
 

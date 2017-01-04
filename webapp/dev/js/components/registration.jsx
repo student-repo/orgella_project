@@ -23,8 +23,8 @@ const codeStyle = {
 };
 
 
-const checkCustomerIntputWithDatabase = (socket,registerStatus) => {
-    socket.emit('REGISTER_DATA','');
+const checkCustomerIntputWithDatabase = (socket,registerStatus, registerData) => {
+    socket.emit('REGISTER_DATA',registerData);
     socket.on('REGISTER_RESPONSE', function(data){
         if(data.res === "REGISTER_SUCCESSFUL"){
             browserHistory.push('/register-successful');
@@ -52,7 +52,7 @@ const registerDataCorrect = (data) => {
 };
 
 
-const Registration = ({alibaba2,socket, registerStat, registerStatus, registerTextFieldContentUpdate, registerTextFieldContent}) => {
+const Registration = ({socket, registerStat, registerStatus, registerTextFieldContentUpdate, registerTextFieldContent}) => {
     console.log("register status");
     console.log(registerStat);
     return (
@@ -106,7 +106,7 @@ const Registration = ({alibaba2,socket, registerStat, registerStatus, registerTe
         <Row>
             <br/>
             {
-                registerDataCorrect(registerTextFieldContent) ? <Button style={buttonStyle} onClick={() => checkCustomerIntputWithDatabase(socket, registerStatus)}>Register</Button> : <Button style={buttonStyle} onClick={() => console.log("button is working")}>Register</Button>
+                registerDataCorrect(registerTextFieldContent) ? <Button style={buttonStyle} onClick={() => checkCustomerIntputWithDatabase(socket, registerStatus, registerTextFieldContent)}>Register</Button> : <Button style={buttonStyle} onClick={() => console.log("button is working")}>Register</Button>
             }
         </Row>
     </div>)
