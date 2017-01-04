@@ -84,9 +84,44 @@ io.on('connection', function(socket){
 
         });
 
+        //
+        // io.sockets.emit('new message', {msg: "message, its working my gentleman",
+        //     res: foo});
+    });
 
-        io.sockets.emit('new message', {msg: "message, its working my gentleman",
-            res: foo});
+    socket.on('CHECK_COOKIE_IDENTITY_DATA', function(data){
+        console.log(data);
+        connection.query('select Password from users where Nick=?',data.nick, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                return;
+            }
+            else if(result.length !== 1){
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                console.log("login not successfully");
+            }
+            else if(result[0].Password === data.password){
+                console.log("login successfully");
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_SUCCESSFULLY"});
+
+            }
+            else{
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                console.log("login not successfully");
+
+
+            }
+            // console.log(result[0].Password);
+            // console.log(result);
+            // console.log(result.length);
+            // io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFUL"});
+
+        });
+
+        //
+        // io.sockets.emit('new message', {msg: "message, its working my gentleman",
+        //     res: foo});
     });
 });
 

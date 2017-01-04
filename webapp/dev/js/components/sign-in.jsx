@@ -14,6 +14,7 @@ import RegistrationTextField from './register-text-field'
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { routerMiddleware, push } from 'react-router-redux'
 import {Link, withRouter} from "react-router";
+import {UserLogged} from '../actions/user-logged-action'
 
 import _ from 'underscore';
 import cookie from 'react-cookie';
@@ -82,7 +83,7 @@ const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, 
     TextFieldContentUpdate(newTextFieldsContent);
 };
 
-const foo = (socket, customerData, router) => {
+const foo = (socket, customerData, router, UserLogged) => {
     socket.emit('TRY_SIGN_IN', customerData);
     socket.on('SIGN_IN_RESPONSE', function(data){
         if(data.res === "SIGN_IN_SUCCESSFULLY"){
@@ -92,6 +93,7 @@ const foo = (socket, customerData, router) => {
             cookie.save("nick", customerData.nick, {path: '/', maxAge: 14 * 24 * 60 * 60});
             cookie.save("password", customerData.password, {path: '/', maxAge: 14 * 24 * 60 * 60});
             // browserHistory.push('/register-successful');
+            UserLogged(true);
             router.push('/register-successful');
         }
         else{
@@ -104,7 +106,7 @@ const foo = (socket, customerData, router) => {
 // onChange={(event, newValue) => updateTextFieldsState(newValue, registerTextFieldContent, registerTextFieldContentUpdate, type)}
 
 
-const SignIn = ({socket, registerStat, registerStatus, signInTextFieldContentUpdate, TextFieldsContent, router}) => {
+const SignIn = ({socket, registerStat, registerStatus, signInTextFieldContentUpdate, TextFieldsContent, router, UserLogged, userLoggedStat}) => {
     console.log(TextFieldsContent);
     return (
         <div>
@@ -129,7 +131,7 @@ const SignIn = ({socket, registerStat, registerStatus, signInTextFieldContentUpd
 
             <Row>
                 <br/>
-                    <Button style={buttonStyle} onClick={() => foo(socket, TextFieldsContent, router)}>Sign in</Button>
+                    <Button style={buttonStyle} onClick={() => foo(socket, TextFieldsContent, router, UserLogged)}>Sign in</Button>
 
             </Row>
         </div>)
@@ -137,12 +139,14 @@ const SignIn = ({socket, registerStat, registerStatus, signInTextFieldContentUpd
 
 function mapStateToProps(state) {
     return {
-        TextFieldsContent: state.display.SignInTextFieldsContent
+        TextFieldsContent: state.display.SignInTextFieldsContent,
+        userLoggedStat: state.display.UserLogged
     };
 }
 
 function matchDispatchToProps(dispatch){
-    return bindActionCreators({signInTextFieldContentUpdate: signInTextFieldContent}, dispatch);
+    return bindActionCreators({signInTextFieldContentUpdate: signInTextFieldContent,
+        UserLogged: UserLogged}, dispatch);
 }
 
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(SignIn));

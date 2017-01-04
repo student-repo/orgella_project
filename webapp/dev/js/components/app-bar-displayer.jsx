@@ -16,29 +16,38 @@ import cookie from 'react-cookie';
 
 
 
-const cookieSignIn = (socket, usrlog) => {
+const cookieSignIn = (socket, usrlog,fff) => {
 
     if(_.isUndefined(cookie.load("nick")) || _.isUndefined(cookie.load('password'))){
         // this.props.UserLogged(true);
-        usrlog(false);
+        if(fff !== false){
+            usrlog(false);
+        }
     }
     else{
-        socket.emit('TRY_SIGN_IN', {nick: cookie.load("nick"),
+        socket.emit('CHECK_COOKIE_IDENTITY_DATA', {nick: cookie.load("nick"),
             password: cookie.load("password")});
-        socket.on('SIGN_IN_RESPONSE', function(data){
+        socket.on('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', function(data){
             if(data.res === "SIGN_IN_SUCCESSFULLY"){
-                usrlog(true);
+                if(fff !== true){
+                    usrlog(true);
+                }
+                // usrlog(true);
             }
             else{
-                usrlog(false);
+                if(fff !== false){
+                    usrlog(false);
+                }
+                // usrlog(false);
             }
         });
     }
 };
 
-    const handleSignOut = () => {
+    const handleSignOut = (UserLogged) => {
         cookie.remove('nick');
         cookie.remove('password');
+        UserLogged(false);
         // browserHistory.push('/register');
     };
 
@@ -52,7 +61,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
                 iconElementLeft={
                     <IconMenu
                         iconButtonElement={
-                            <IconButton iconStyle={{color: 'white'}} onClick={() => cookieSignIn(socket, UserLogged)}>
+                            <IconButton iconStyle={{color: 'white'}} onClick={() => cookieSignIn(socket, UserLogged, userLoggedStat)}>
                                 <NavigationMenu />
                             </IconButton>
                         }
@@ -83,7 +92,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
                             userLoggedStat ? <MenuItem
                                 primaryText="Sign out"
                                 leftIcon={<SignOutIcon />}
-                                onTouchTap={() => handleSignOut()}
+                                onTouchTap={() => handleSignOut(UserLogged)}
                             /> :
                                 <MenuItem
                                     primaryText="Sign in"
@@ -105,6 +114,8 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
 };
 
 function mapStateToProps(state) {
+    console.log("STATE STATE");
+    console.log(state);
     return {
         userLoggedStat: state.display.UserLogged
     };
