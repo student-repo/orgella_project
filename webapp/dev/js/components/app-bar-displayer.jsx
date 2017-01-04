@@ -2,12 +2,12 @@ import React, {Component} from "react";
 import AppBar from "material-ui/AppBar";
 import IconButton from "material-ui/IconButton";
 import IconMenu from "material-ui/IconMenu";
-import LogIcon from 'material-ui/svg-icons/action/exit-to-app'
+// import LogIcon from 'material-ui/svg-icons/action/exit-to-app'
 import NavigationMenu from "material-ui/svg-icons/navigation/menu";
 import MenuItem from "material-ui/MenuItem";
 import {Link, withRouter} from "react-router";
 import {Col, Row} from "pui-react-grids";
-import {HomeIcon, RegisterIcon, AddOfferIcon, MyAccountIcon} from "../utils/icons"
+import {HomeIcon, RegisterIcon, AddOfferIcon, MyAccountIcon, SignInIcon, SignOutIcon} from "../utils/icons"
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -15,6 +15,12 @@ import TextField from 'material-ui/TextField';
 import * as Colors from 'material-ui/styles/colors';
 import Button from 'react-bootstrap/lib/Button'
 import * as buttonStyle from '../../scss/simple-button-css.css'
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {UserLogged} from '../actions/user-logged-action'
+import {UserKeys} from '../actions/user-keys-action'
+import _ from 'underscore';
+import cookie from 'react-cookie';
 
 const codeStyle = {
     fontFamily: 'Courier New',
@@ -25,19 +31,94 @@ const codeStyle = {
     fontSize: '40px'
 };
 
+
+function listCookies() {
+    var theCookies = document.cookie.split(';');
+    var aString = '';
+    for (var i = 1 ; i <= theCookies.length; i++) {
+        aString += i + ' ' + theCookies[i-1] + "\n";
+    }
+    return aString;
+}
+
 class ApplicationBarDisplayer extends Component {
 
     constructor(){
         super();
-        this.state = {open: false}
+        this.state = {open: false};
+        this.handleSignIn = this.handleSignIn.bind(this);
+        this.handleSignOut = this.handleSignOut.bind(this);
+        // this.handleClose = this.handleClose.bind(this);
+        this.updateTextFieldsState = this.updateTextFieldsState.bind(this);
+        this.handleOpenDialog = this.handleOpenDialog.bind(this);
+        this.cookieSignIn = this.cookieSignIn.bind(this);
     }
 
-    handleOpen(){
+    handleOpenDialog(){
         this.setState({open: true});
     };
 
-    handleClose(){
+    handleSignOut(){
+        cookie.remove('nick');
+        cookie.remove('password');
+    }
+
+    cookieSignIn(usrlog){
+        console.log("cookie nick: " + cookie.load("nick"));
+        console.log("cookie password: " + cookie.load("password"));
+
+        if(_.isUndefined(cookie.load("nick")) || _.isUndefined(cookie.load('password'))){
+            // this.props.UserLogged(true);
+            usrlog(false);
+        }
+        else{
+            this.props.socket.emit('TRY_SIGN_IN', {nick: cookie.load("nick"),
+                password: cookie.load("password")});
+            this.props.socket.on('SIGN_IN_RESPONSE', function(data){
+                if(data.res === "SIGN_IN_SUCCESSFULLY"){
+                    // this.props.UserLogged(true);
+                    usrlog(true);
+                }
+                else{
+                    // this.props.UserLogged(false);
+                    usrlog(false);
+                }
+            });
+        }
+        // // listCookies();
+        // console.log("cookie sign in ?: " + res111);
+        // return res111;
+    }
+
+    handleSignIn(){
+        this.props.socket.emit('TRY_SIGN_IN', this.props.userKeys);
+        var nick = this.props.userKeys.nick;
+        var password = this.props.userKeys.password;
+        // console.log(" $$$$$$$$$$$$$$$$$$$$$$$$ cookie saved nick: " + nick +" password: " +password );
+        this.props.socket.on('SIGN_IN_RESPONSE', function(data){
+            if(data.res === "SIGN_IN_SUCCESSFULLY"){
+                // browserHistory.push('/register-successful');
+                console.log("LOGIN SUCCESSFULLY !!! @@@ !!!!");
+                console.log("cookie saved nick: " + nick +" password: " +password );
+                cookie.save("nick", nick, {path: '/', maxAge: 14 * 24 * 60 * 60});
+                cookie.save("password", password, {path: '/', maxAge: 14 * 24 * 60 * 60});
+            }
+            else{
+                console.log("LOGIN NOT SUCCESSFULLY !!! @@@ !!!!");
+                // browserHistory.push('/register');
+                // store.dispatch(push('/register'));
+            }
+        });
+        // this.props.userLogged(true);
         this.setState({open: false});
+    };
+
+    updateTextFieldsState(newValue, userKeys, UserKeysUpdate, type){
+        var newTextFieldsContent = _.clone(userKeys);
+        newTextFieldsContent[type] = newValue;
+        UserKeysUpdate(newTextFieldsContent);
+        console.log(newTextFieldsContent);
+
     };
 
     render() {
@@ -49,11 +130,16 @@ class ApplicationBarDisplayer extends Component {
         //         onTouchTap={this.handleClose.bind(this)}
         //     />,
         // ];
+        {/*<Button style={buttonStyle} onClick={this.handleSignIn}>Sign in</Button>*/}
+        // <Button style={buttonStyle} onClick={() => this.handleSignIn(this.props.userKeys.Nick, this.props.userKeys.Password)}>Sign in</Button>
         const actions = [
-            <Button style={buttonStyle} onClick={this.handleClose.bind(this)}>Sign in</Button>
+            <Button style={buttonStyle} onClick={this.handleSignIn}>Sign in</Button>
         ];
+        // this.cookieSignIn(this.props.userLogged);
+        const {content, router, children, userLoggedStat} = this.props;
 
-        const {content, router, children} = this.props;
+
+        console.log("user logged stat: " + userLoggedStat);
         return (
             <div>
                 <AppBar
@@ -62,7 +148,7 @@ class ApplicationBarDisplayer extends Component {
                     iconElementLeft={
                         <IconMenu
                             iconButtonElement={
-                                <IconButton iconStyle={{color: 'white'}}>
+                                <IconButton iconStyle={{color: 'white'}} onClick={() => this.cookieSignIn(this.props.UserLogged)}>
                                     <NavigationMenu />
                                 </IconButton>
                             }
@@ -89,11 +175,18 @@ class ApplicationBarDisplayer extends Component {
                                 onTouchTap={() => router.push('/register')}
                             />
                             <Divider />
-                            <MenuItem
-                                primaryText="Sign in"
-                                leftIcon={<LogIcon />}
-                                onTouchTap={this.handleOpen.bind(this)}
-                            />
+                            {
+                                userLoggedStat ? <MenuItem
+                                    primaryText="Sign out"
+                                    leftIcon={<SignOutIcon />}
+                                    onTouchTap={this.handleSignOut}
+                                /> :
+                                    <MenuItem
+                                        primaryText="Sign in"
+                                        leftIcon={<SignInIcon />}
+                                        onTouchTap={this.handleOpenDialog}
+                                    />
+                            }
                         </IconMenu>
                     }
                 />
@@ -108,6 +201,7 @@ class ApplicationBarDisplayer extends Component {
                     <TextField
                         floatingLabelText="Orgella nick"
                         hintText="Orgella Nick Field"
+                        onChange={(event, newValue) => this.updateTextFieldsState(newValue, this.props.userKeys, this.props.UserKeysUpdate, "nick")}
                     />
                         </Row>
                     <Row>
@@ -115,6 +209,7 @@ class ApplicationBarDisplayer extends Component {
                         hintText="Password Field"
                         floatingLabelText="Password"
                         type="password"
+                        onChange={(event, newValue) => this.updateTextFieldsState(newValue, this.props.userKeys, this.props.UserKeysUpdate, "password")}
                     />
                         </Row>
                 </Dialog>
@@ -131,5 +226,19 @@ class ApplicationBarDisplayer extends Component {
     }
 }
 
-export default withRouter(ApplicationBarDisplayer);
+function mapStateToProps(state) {
+    return {
+        userLoggedStat: state.UserLogged,
+        userKeys: state.UserKeys
+    };
+}
+
+function matchDispatchToProps(dispatch){
+    return bindActionCreators({UserLogged: UserLogged,
+        UserKeysUpdate: UserKeys}, dispatch);
+}
+export default withRouter (connect(mapStateToProps, matchDispatchToProps)(ApplicationBarDisplayer));
+
+
+// export default withRouter(ApplicationBarDisplayer);
 

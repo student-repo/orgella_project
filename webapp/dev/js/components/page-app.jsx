@@ -24,15 +24,9 @@ const store = createStore(
     allReducers,
     applyMiddleware(thunk, promise, logger)
 );
-//
-// {<Route path="/" alibaba="its..." component={ApplicationBar}>}
-//
-//     <IndexRoute component={() => (<ApplicationIndex />)}/>
-//     {RegisterRoutes}
-
 const ApplicationBarWithProps = ({children}) => {
     return (
-        <ApplicationBar alibaba="hello alibaba">
+        <ApplicationBar alibaba="hello alibaba" socket={socket}>
             {children}
             </ApplicationBar>
     )

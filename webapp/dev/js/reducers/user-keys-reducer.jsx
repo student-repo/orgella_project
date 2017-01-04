@@ -1,9 +1,13 @@
 export default function (state = null, action) {
+
     switch (action.type) {
-        case 'REGISTER_STATUS':
+        case 'USER_KEYS':
             return action.payload;
             break;
-        default: return false;
+        default: return {
+            nick: '',
+            password: ''
+        }
     }
     return state;
 }

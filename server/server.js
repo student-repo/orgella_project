@@ -52,7 +52,42 @@ io.on('connection', function(socket){
             io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
         });
         // io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
-    })
+    });
+
+    socket.on('TRY_SIGN_IN', function(data){
+        console.log(data);
+        connection.query('select Password from users where Nick=?',data.nick, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                return;
+            }
+            else if(result.length !== 1){
+                io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                console.log("login not successfully");
+            }
+            else if(result[0].Password === data.password){
+              console.log("login successfully");
+                io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_SUCCESSFULLY"});
+
+            }
+            else{
+                io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                console.log("login not successfully");
+
+
+            }
+            // console.log(result[0].Password);
+            // console.log(result);
+            // console.log(result.length);
+            // io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFUL"});
+
+        });
+
+
+        io.sockets.emit('new message', {msg: "message, its working my gentleman",
+            res: foo});
+    });
 });
 
 // io.on('foo', function(socket){
