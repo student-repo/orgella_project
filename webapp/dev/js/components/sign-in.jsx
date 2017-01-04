@@ -11,6 +11,7 @@ import {Link, withRouter} from "react-router";
 import {UserLogged} from '../actions/user-logged-action'
 import _ from 'underscore';
 import cookie from 'react-cookie';
+import md5 from 'md5';
 
 const codeStyle = {
     fontFamily: 'Courier New',
