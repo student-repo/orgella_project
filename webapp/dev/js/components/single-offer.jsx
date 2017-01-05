@@ -15,6 +15,7 @@ import SingleOfferImage from './single-image'
 import {addOfferTextFieldContent} from '../actions/add-offer-text-fields-content-action'
 import {addOfferStatus} from '../actions/add-offer-status';
 import {browserHistory} from "react-router";
+import HorizontalLinearStepper from "./horizontal-linear-stepper";
 
 const codeStyle = {
     fontFamily: 'Courier New',
@@ -42,44 +43,6 @@ const categoryStyle = {
 };
 
 
-const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, art) => {
-    var newTextFieldsContent = _.clone(TextFieldContent);
-    newTextFieldsContent[art] = value;
-    TextFieldContentUpdate(newTextFieldsContent);
-};
-
-const chooseComponentToDisplay = (TextFieldsContent, socket, addOfferStatus) => {
-    if(foo(TextFieldsContent)){
-        return (<br/>)
-    }
-    else if(addOfferDataCorrect(TextFieldsContent)){
-        return(<Button style={buttonStyle} onClick={() => checkCustomerInputWithDatabase(socket, addOfferStatus, TextFieldsContent)}>Add Offer</Button>)
-    }
-    else{
-        return (<font style={codeStyle}>Incorrect data</font>)
-    }
-};
-
-const checkCustomerInputWithDatabase = (socket, updateAddOfferStatus, addOfferData) => {
-    var aaaa = {
-        ProductName: addOfferData.ProductName,
-        Category: addOfferData.Category,
-        Description: addOfferData.Description,
-        Price: parseInt(addOfferData.Price),
-        ProductQuantity: parseInt(addOfferData.ProductQuantity),
-        UserNick: cookie.load("nick")
-    };
-    socket.emit('ADD_OFFER_DATA',aaaa);
-    socket.on('ADD_OFFER_RESPONSE', function(data){
-        if(data.res === "ADD_OFFER_SUCCESSFUL"){
-            browserHistory.push('/add-offer-successfully');
-        }
-        else{
-            console.log("register not succesfull !!!");
-            browserHistory.push('/add-offer');
-        }
-    });
-};
 
 const SingleOffer = ({socket, offerDisplayInfo}) => {
     return (
@@ -104,6 +67,9 @@ const SingleOffer = ({socket, offerDisplayInfo}) => {
                     <font style={categoryStyle}>Description: </font>
                     <font style={infoStyle}>{offerDisplayInfo.Description}</font>
                 </Col>
+            </Row>
+            <Row>
+                <HorizontalLinearStepper />
             </Row>
         </div>)
 };

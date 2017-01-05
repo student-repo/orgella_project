@@ -64,7 +64,15 @@ export const initialDisplayReducer = {
             type: "United States Postal Service",
             cost: 12
         }
-    ]
+    ],
+    orderSelectFields: {
+        quantity: 1,
+        shipmentType: {
+            id: 3,
+            type: "OrgellaInPost",
+            cost: 2
+        }
+    }
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -98,6 +106,9 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'SINGLE_OFFER_DISPLAY_INFO':
             return {...displayState, singleOfferDisplayInfo: action.payload};
+
+        case 'ORDER_SELECT_FIELDS':
+            return {...displayState, orderSelectFields: action.payload};
 
         default:
             return displayState;
