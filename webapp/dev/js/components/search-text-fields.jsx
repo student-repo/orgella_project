@@ -125,7 +125,7 @@ const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket,
         <div>
             {currentSearch.map(key => {
                 return (
-                    <SingleOfferImage price={key.Price} productName={key.ProductName} withDescription={true} key={Math.random()} />
+                    <SingleOfferImage offerInfo={key} withDescription={true} key={Math.random()} />
                 )
             })}
         </div>

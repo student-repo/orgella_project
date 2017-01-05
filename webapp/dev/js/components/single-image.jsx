@@ -1,6 +1,10 @@
 import React from "react";
 import {Col} from "pui-react-grids";
 import * as Colors from 'material-ui/styles/colors';
+import {singleOfferDisplayInfo} from '../actions/single-offer-display-info-action';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {Link, withRouter} from "react-router";
 
 const style = {
     'border': '1px solid #d9d9d9',
@@ -30,12 +34,17 @@ const aTagStyle = {
     cursor: "pointer"
 };
 
-const SingleOfferImage = ({price, productName, withDescription}) => (
+const singleOfferDiaplayUpdate = (singleOfferDisplayInfoUpdate, router, offerInfo) => {
+    singleOfferDisplayInfoUpdate(offerInfo);
+    router.push('/single-offer');
+};
+
+const SingleOfferImage = ({router, withDescription, singleOfferDisplayInfoUpdate, offerInfo}) => (
     <Col md={8}>
-            <img className="entryImage" src="no-image3.png" alt="Unable to load image" style={style}/>
+            <img className="entryImage" onClick={() => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo)} src="no-image3.png" alt="Unable to load image" style={style}/>
         {
-            withDescription ? <div><a style={aTagStyle}><font style={priceStyle}>{'$' + price}</font>
-                <font style={descriptionStyle}>{productName}</font></a></div> : <br/>
+            withDescription ? <div><a style={aTagStyle} onClick={() => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo)}><font style={priceStyle}>{'$' + offerInfo.Price}</font>
+                <font style={descriptionStyle}>{offerInfo.ProductName}</font></a></div> : <br/>
         }
         <br/>
         <br/>
@@ -43,4 +52,17 @@ const SingleOfferImage = ({price, productName, withDescription}) => (
     </Col>
 );
 
-export default SingleOfferImage;
+
+function mapStateToProps(state) {
+    return {
+        TextFieldsContent: state.display.SearchTextFieldsContent,
+        currentSearch: state.display.currentSearch
+    };
+}
+
+function matchDispatchToProps(dispatch){
+    return bindActionCreators({singleOfferDisplayInfoUpdate: singleOfferDisplayInfo}, dispatch);
+}
+export default withRouter (connect(mapStateToProps, matchDispatchToProps)(SingleOfferImage));
+
+// export default SingleOfferImage;

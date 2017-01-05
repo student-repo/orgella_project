@@ -30,7 +30,13 @@ export const initialDisplayReducer = {
         PriceFrom: '',
         PriceTo: ''
     },
-    currentSearch: []
+    currentSearch: [],
+    singleOfferDisplayInfo: {
+        ProductName: '',
+        Price: '',
+        ProductQuantity: '',
+        Description: ''
+    }
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -61,6 +67,9 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'CURRENT_SEARCH':
             return {...displayState, currentSearch: action.payload};
+
+        case 'SINGLE_OFFER_DISPLAY_INFO':
+            return {...displayState, singleOfferDisplayInfo: action.payload};
 
         default:
             return displayState;

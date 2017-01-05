@@ -99,7 +99,7 @@ io.on('connection', function(socket){
 
     socket.on('SEARCH', function(data){
         console.log(data);
-        var queryQuery = "select ProductName, Category, Description, Price from offers where ProductName like '%" + data.ProductName + "%' and ";
+        var queryQuery = "select ProductName, Category, Description, Price, ProductQuantity from offers where ProductName like '%" + data.ProductName + "%' and ";
         if(data.PriceFrom === '' && data.PriceTo === ''){
             queryQuery += "Category like '%" + data.Category + "%'"
         }

@@ -18,6 +18,7 @@ import SignInFailuteRoutes from '../routes/sign-in-failure-routes'
 import AddOffer from './add-offer';
 import AddOfferSuccessfullyRoutes from '../routes/add-offer-successfully-routes';
 import AddOfferNotAllowedRoutes from '../routes/add-offer-not-alloved-routes';
+import SingleOfferRoutes from '../routes/single-offer-routes'
 
 
 var socket = io.connect('http://localhost:3200/');
@@ -70,6 +71,7 @@ const PageApp = () => (
                 {AddOfferWithProps}
                 {AddOfferSuccessfullyRoutes}
                 {AddOfferNotAllowedRoutes}
+                {SingleOfferRoutes}
 
             </Route>
         </Router>
