@@ -91,6 +91,17 @@ io.on('connection', function(socket){
                     io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
                     return;
                 }
+                var offerID = query["_results"][0]["insertId"];
+
+                data.shipmentPossibility.map(key => {
+                    connection.query('insert into offer_details set ?', {OfferID: offerID, ShipmentType: key}, function(err, result){
+                        if(err){
+                            console.error(err);
+                            io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
+                            return;
+                        }
+                    });
+                });
                 console.error(err);
                 io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_SUCCESSFUL"});
             });

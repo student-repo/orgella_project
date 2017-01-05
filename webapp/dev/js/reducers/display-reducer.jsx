@@ -21,7 +21,8 @@ export const initialDisplayReducer = {
         Category: '',
         Description: '',
         Price: '',
-        ProductQuantity: ''
+        ProductQuantity: '',
+        shipmentPossibility: []
     },
     AddOfferStatus: false,
     SearchTextFieldsContent: {
@@ -36,7 +37,34 @@ export const initialDisplayReducer = {
         Price: '',
         ProductQuantity: '',
         Description: ''
-    }
+    },
+    shipmentPossibility: [
+        {
+            id: 0,
+            type: "PostOffice",
+            cost: 14
+        },
+        {
+            id: 1,
+            type: "Royal Mail",
+            cost: 20
+        },
+        {
+            id: 2,
+            type: "DHL",
+            cost: 10
+        },
+        {
+            id: 3,
+            type: "OrgellaInPost",
+            cost: 2
+        },
+        {
+            id: 4,
+            type: "United States Postal Service",
+            cost: 12
+        }
+    ]
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {

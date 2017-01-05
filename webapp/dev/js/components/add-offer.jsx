@@ -15,6 +15,7 @@ import SingleOfferImage from './single-image'
 import {addOfferTextFieldContent} from '../actions/add-offer-text-fields-content-action'
 import {addOfferStatus} from '../actions/add-offer-status';
 import {browserHistory} from "react-router";
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
 const codeStyle = {
     fontFamily: 'Courier New',
@@ -64,10 +65,11 @@ const foo = (data) => {
         Description: data.Description,
         Price: data.Price,
         ProductQuantity: data.ProductQuantity,
-        UserNick: cookie.load("nick")
+        UserNick: cookie.load("nick"),
+        shipmentPossibility: data.shipmentPossibility
     };
     for(var key in dat) {
-        if(dat[key] === ''){
+        if(dat[key] === '' || dat[key].length === 0 || dat[key] === "none"){
             return true;
         }
     }
@@ -93,7 +95,8 @@ const checkCustomerInputWithDatabase = (socket, updateAddOfferStatus, addOfferDa
         Description: addOfferData.Description,
         Price: parseInt(addOfferData.Price),
         ProductQuantity: parseInt(addOfferData.ProductQuantity),
-        UserNick: cookie.load("nick")
+        UserNick: cookie.load("nick"),
+        shipmentPossibility: addOfferData.shipmentPossibility
     };
     socket.emit('ADD_OFFER_DATA',aaaa);
     socket.on('ADD_OFFER_RESPONSE', function(data){
@@ -108,7 +111,7 @@ const checkCustomerInputWithDatabase = (socket, updateAddOfferStatus, addOfferDa
     // updateAddOfferStatus(true);
 };
 
-const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, router, UserLogged, userLoggedStat, addOfferStatus, updateAddOfferStatus}) => {
+const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, router, UserLogged, userLoggedStat, addOfferStatus, updateAddOfferStatus, shipmentPossibility}) => {
     console.log(TextFieldsContent);
     return (
         <div>
@@ -162,6 +165,32 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                             onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "ProductQuantity")}
                         />
                     </Row>
+                </Col>
+            </Row>
+                    <Row>
+                        <font style={codeStyle}>Shipment Possibility</font>
+                        <br/>
+                        <Table multiSelectable={true} onRowSelection={(selectedRows) => updateTextFieldsState(selectedRows, TextFieldsContent, addOfferTextFieldContentUpdate, "shipmentPossibility")}>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHeaderColumn>ID</TableHeaderColumn>
+                                    <TableHeaderColumn>Type</TableHeaderColumn>
+                                    <TableHeaderColumn>Cost</TableHeaderColumn>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody deselectOnClickaway={false}>
+                                {shipmentPossibility.map(key => {
+                                    return (
+                                        <TableRow key={key.id} selected={TextFieldsContent.shipmentPossibility.indexOf(key.id) > -1}>
+                                            <TableRowColumn>{key.id}</TableRowColumn>
+                                            <TableRowColumn>{key.type}</TableRowColumn>
+                                            <TableRowColumn>{key.cost}</TableRowColumn>
+                                        </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                        </Row>
                     <Row>
                         <br/>
                         {
@@ -170,10 +199,6 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                         }
 
                     </Row>
-
-                    </Col>
-
-            </Row>
         </div>)
 };
 
@@ -181,8 +206,8 @@ function mapStateToProps(state) {
     return {
         TextFieldsContent: state.display.AddOfferTextFieldsContent,
         userLoggedStat: state.display.UserLogged,
-        addOfferStatus : state.AddOfferStatus
-
+        addOfferStatus : state.display.AddOfferStatus,
+        shipmentPossibility: state.display.shipmentPossibility
     };
 }
 
@@ -193,19 +218,3 @@ function matchDispatchToProps(dispatch){
 }
 
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(AddOffer));
-
-
-//
-// addOfferDataCorrect(TextFieldsContent) ? <Button style={buttonStyle} onClick={() => checkCustomerInputWithDatabase(socket, addOfferStatus, TextFieldsContent)}>Add Offer</Button> :
-//     <font style={codeStyle}>Incorrect data</font>
-
-
-// if(foo(TextFieldsContent)){
-//     return (<br/>)
-// }
-// else if(addOfferDataCorrect(TextFieldsContent)){
-//     return(<Button style={buttonStyle} onClick={() => checkCustomerInputWithDatabase(socket, addOfferStatus, TextFieldsContent)}>Add Offer</Button>)
-// }
-// else{
-//     return (<font style={codeStyle}>Incorrect data</font>)
-// }
