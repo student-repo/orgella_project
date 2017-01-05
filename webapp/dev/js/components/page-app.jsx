@@ -61,7 +61,7 @@ const PageApp = () => (
     <Provider store={store}>
         <Router history={enhancedHistory}>
             <Route path="/" component={ApplicationBarWithProps}>
-                <IndexRoute component={() => (<ApplicationIndex />)}/>
+                <IndexRoute component={() => (<ApplicationIndex socket={socket}/>)}/>
                 {RegisterRoutesWithProps}
                 {RegisterSuccessFullyRoutes}
                 {SignInWithProps}

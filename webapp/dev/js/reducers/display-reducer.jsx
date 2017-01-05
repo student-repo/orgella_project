@@ -23,7 +23,14 @@ export const initialDisplayReducer = {
         Price: '',
         ProductQuantity: ''
     },
-    AddOfferStatus: false
+    AddOfferStatus: false,
+    SearchTextFieldsContent: {
+        ProductName: '',
+        Category: '',
+        PriceFrom: '',
+        PriceTo: ''
+    },
+    currentSearch: []
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -48,6 +55,12 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'ADD_OFFER_STATUS':
             return {...displayState, AddOfferStatus: action.payload};
+
+        case 'SEARCH_TEXT_FIELD_CONTENT':
+            return {...displayState, SearchTextFieldsContent: action.payload};
+
+        case 'CURRENT_SEARCH':
+            return {...displayState, currentSearch: action.payload};
 
         default:
             return displayState;

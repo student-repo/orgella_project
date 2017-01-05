@@ -18,13 +18,23 @@ var connection = mysql.createConnection({
 var foo;
 
 
-connection.connect();
-connection.query('select * from users', function(err, result){
-    foo = result;
-});
+// connection.connect();
+// connection.query('select * from offers', function(err, result){
+//     foo = result;
+// });
+//
+// console.log(foo);
 
 
 io.on('connection', function(socket){
+    // // var a = " where Description = 'opis'";
+    // var l = "100";
+    // // var productName = " where ProductName like '%" + l + "%'";
+    // var productName = " where Price > " + l;
+    // connection.query('select ProductName, Category, Description, Price from offers' + productName, function(err, result){
+    //     console.log(result);
+    // });
+
     console.log("i get connection");
     io.sockets.emit('new message', {msg: "message, its working my gentleman",
                                         res: foo});
@@ -84,6 +94,36 @@ io.on('connection', function(socket){
                 console.error(err);
                 io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_SUCCESSFUL"});
             });
+        });
+    });
+
+    socket.on('SEARCH', function(data){
+        console.log(data);
+        var queryQuery = "select ProductName, Category, Description, Price from offers where ProductName like '%" + data.ProductName + "%' and ";
+        if(data.PriceFrom === '' && data.PriceTo === ''){
+            queryQuery += "Category like '%" + data.Category + "%'"
+        }
+        else if(data.PriceFrom === '' && data.PriceTo !== ''){
+            queryQuery += "Category like '%" + data.Category + "%' and Price <= " + data.PriceTo;
+        }
+        else if(data.PriceFrom !== '' && data.PriceTo === ''){
+            queryQuery += "Category like '%" + data.Category + "%' and Price >= " + data.PriceFrom;
+        }
+        else if(data.PriceFrom !== '' && data.PriceTo !== ''){
+            queryQuery += "Category like '%" + data.Category + "%' and Price >= " + data.PriceFrom +
+            " and Price <= " + data.PriceTo;
+        }
+        connection.query(queryQuery, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('SEARCH_RESPONSE', {res: "SEARCH_NOT_SUCCESSFUL"});
+                return;
+            }
+            else{
+                io.sockets.emit('SEARCH_RESPONSE', {res: "SEARCH_SUCCESSFUL",
+                    data: result
+                });
+            }
         });
     });
 

@@ -30,13 +30,15 @@ const aTagStyle = {
     cursor: "pointer"
 };
 
-const SingleOfferImage = ({price, description, withDescription}) => (
+const SingleOfferImage = ({price, productName, withDescription}) => (
     <Col md={8}>
             <img className="entryImage" src="no-image3.png" alt="Unable to load image" style={style}/>
         {
             withDescription ? <div><a style={aTagStyle}><font style={priceStyle}>{'$' + price}</font>
-                <font style={descriptionStyle}>{description}</font></a></div> : <br/>
+                <font style={descriptionStyle}>{productName}</font></a></div> : <br/>
         }
+        <br/>
+        <br/>
 
     </Col>
 );
