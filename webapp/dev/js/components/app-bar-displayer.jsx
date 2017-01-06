@@ -13,11 +13,11 @@ import {connect} from 'react-redux';
 import {UserLogged} from '../actions/user-logged-action'
 import _ from 'underscore';
 import cookie from 'react-cookie';
+import {myAccountData} from '../actions/my-account-action'
 
 
 
 const cookieSignIn = (socket, usrlog,fff) => {
-
     if(_.isUndefined(cookie.load("nick")) || _.isUndefined(cookie.load('password'))){
         if(fff !== false){
             usrlog(false);
@@ -57,7 +57,23 @@ const handleAddOffer = (router, UserLogged) => {
 
 };
 
-const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, UserLogged}) => {
+const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router) => {
+    socket.emit('MY_ACCOUNT_DATA',cookie.load("nick"));
+    socket.on('MY_ACCOUNT_DATA_RESPONSE', function(data){
+        if(data.res === "MY_ACCOUNT_DATA_SUCCESSFUL"){
+            // browserHistory.push('/register-successful');
+            console.log(data.data);
+            myAccountDataUpdate(data.data);
+            router.push("/my-account");
+        }
+        else{
+            console.log("register not succesfull !!!");
+            // browserHistory.push('/register');
+        }
+    });
+};
+
+const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, UserLogged, myAccountDataUpdate}) => {
     // console.log(TextFieldsContent);
     return (
         <div>
@@ -83,6 +99,8 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
                         <MenuItem
                             primaryText="My account"
                             leftIcon={<MyAccountIcon />}
+                            disabled={!userLoggedStat}
+                            onTouchTap={() => checkCustomerIntputWithDatabase(socket, myAccountDataUpdate, router)}
                         />
                         <MenuItem
                             primaryText="Add offer"
@@ -129,6 +147,7 @@ function mapStateToProps(state) {
 }
 
 function matchDispatchToProps(dispatch){
-    return bindActionCreators({UserLogged: UserLogged}, dispatch);
+    return bindActionCreators({UserLogged: UserLogged,
+        myAccountDataUpdate: myAccountData}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(ApplicationBarDisplayer));

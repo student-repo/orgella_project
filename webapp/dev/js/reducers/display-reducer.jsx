@@ -65,7 +65,13 @@ export const initialDisplayReducer = {
     orderSelectFields: {
         quantity: '',
         shipmentType: ''
-    }
+    },
+    myAccountData: [{
+        Nick: '',
+        FirstName: '',
+        LastName: '',
+        Address: ''
+    }]
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -103,6 +109,8 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
         case 'ORDER_SELECT_FIELDS':
             return {...displayState, orderSelectFields: action.payload};
 
+        case 'MY_ACCOUNT_DATA':
+            return {...displayState, myAccountData: action.payload};
         default:
             return displayState;
     }

@@ -239,18 +239,54 @@ io.on('connection', function(socket){
 
 
             }
-            // console.log(result[0].Password);
-            // console.log(result);
-            // console.log(result.length);
-            // io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFUL"});
-
         });
 
-        //
-        // io.sockets.emit('new message', {msg: "message, its working my gentleman",
-        //     res: foo});
+    });
+
+    socket.on('CHECK_COOKIE_IDENTITY_DATA2', function(data){
+        console.log(data);
+        connection.query('select Password, PasswordSalt from users where Nick=?',data.nick, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                return;
+            }
+            else if(result.length !== 1){
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                console.log("login not successfully");
+            }
+            else if(result[0].Password === md5(data.password + result[0].PasswordSalt)){
+                console.log("login successfully");
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_SUCCESSFULLY"});
+
+            }
+            else{
+                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                console.log("login not successfully");
+
+
+            }
+        });
+
+    });
+
+    socket.on('MY_ACCOUNT_DATA', function(data){
+        console.log(data);
+        connection.query('select Nick, FirstName, LastName, Address from users where Nick=?',data, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('MY_ACCOUNT_DATA_RESPONSE', {res: "MY_ACCOUNT_DATA_NOT_SUCCESSFUL"});
+                return;
+            }
+            else{
+                io.sockets.emit('MY_ACCOUNT_DATA_RESPONSE', {res: "MY_ACCOUNT_DATA_SUCCESSFUL", data: result});
+            }
+
+        });
     });
 });
+
+
 
 // io.on('foo', function(socket){
 //     console.log("i got new user");

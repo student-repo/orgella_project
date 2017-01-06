@@ -35,14 +35,14 @@ const categoryStyle = {
 
 
 
-const SingleOffer = ({socket, offerDisplayInfo}) => {
+const SingleOffer = ({socket, offerDisplayInfo, UserLogged}) => {
     return (
         <div>
             <Row>
                 <font style={codeStyle}>Single Offer Displaying</font>
             </Row>
             <Row>
-                <SingleOfferImage withDescription={false}/>
+                <SingleOfferImage withDescription={false} image="no-image3.png"/>
                 <Col md={2}>
                     </Col>
                 <Col md={14}>
@@ -59,15 +59,17 @@ const SingleOffer = ({socket, offerDisplayInfo}) => {
                     <font style={infoStyle}>{offerDisplayInfo.Description}</font>
                 </Col>
             </Row>
-            <Row>
-                <HorizontalLinearStepper socket={socket}/>
+            <Row>{
+                UserLogged ? <HorizontalLinearStepper socket={socket}/> : <br/>
+            }
             </Row>
         </div>)
 };
 
 function mapStateToProps(state) {
     return {
-        offerDisplayInfo: state.display.singleOfferDisplayInfo
+        offerDisplayInfo: state.display.singleOfferDisplayInfo,
+        UserLogged: state.display.UserLogged
     };
 }
 

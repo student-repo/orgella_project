@@ -20,6 +20,7 @@ import AddOfferSuccessfullyRoutes from '../routes/add-offer-successfully-routes'
 import AddOfferNotAllowedRoutes from '../routes/add-offer-not-alloved-routes';
 import SingleOffer from '../components/single-offer'
 import orderSuccessfullyRouter from '../routes/order-successfully-router'
+import MyAccount from '../components/my-account'
 
 
 var socket = io.connect('http://localhost:3200/');
@@ -62,6 +63,12 @@ const SingleOfferWithProps = (
     </Route>
 );
 
+const MyAccountWithProps = (
+    <Route path="my-account">
+        <IndexRoute component={() => <MyAccount socket={socket}/>}/>
+    </Route>
+);
+
 const enhancedHistory = syncHistoryWithStore(browserHistory, store);
 
 const PageApp = () => (
@@ -79,7 +86,7 @@ const PageApp = () => (
                 {AddOfferNotAllowedRoutes}
                 {SingleOfferWithProps}
                 {orderSuccessfullyRouter}
-
+                {MyAccountWithProps}
             </Route>
         </Router>
     </Provider>

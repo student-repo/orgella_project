@@ -24,9 +24,9 @@ export const CategoryExample = ({category}) => {
                 <br/>
             </div>
 
-            <SingleOfferImage price="100" description="some description some description some description some description" withDescription={true}/>
-            <SingleOfferImage price="120" description="some description some description some description some description" withDescription={true}/>
-            <SingleOfferImage price="140" description="some description some description some description some description" withDescription={true}/>
+            <SingleOfferImage price="100" description="some description some description some description some description" withDescription={true} image="no-image3.png"/>
+            <SingleOfferImage price="120" description="some description some description some description some description" withDescription={true} image="no-image3.png"/>
+            <SingleOfferImage price="140" description="some description some description some description some description" withDescription={true} image="no-image3.png"/>
 
         </Col>
     )

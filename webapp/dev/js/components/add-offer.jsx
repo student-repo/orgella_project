@@ -112,14 +112,13 @@ const checkCustomerInputWithDatabase = (socket, updateAddOfferStatus, addOfferDa
 };
 
 const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, router, UserLogged, userLoggedStat, addOfferStatus, updateAddOfferStatus, shipmentPossibility}) => {
-    console.log(TextFieldsContent);
     return (
         <div>
             <Row>
                 <font style={codeStyle}>Add Offer</font>
             </Row>
             <Row>
-                <SingleOfferImage withDescription={false}/>
+                <SingleOfferImage withDescription={false} image="no-image3.png"/>
 
                 <Col md={3}>
                 </Col>
