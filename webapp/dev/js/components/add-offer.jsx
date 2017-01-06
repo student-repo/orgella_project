@@ -179,12 +179,12 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                                 </TableRow>
                             </TableHeader>
                             <TableBody deselectOnClickaway={false}>
-                                {shipmentPossibility.map(key => {
+                                {_.keys(shipmentPossibility).map(key => {
                                     return (
-                                        <TableRow key={key.id} selected={TextFieldsContent.shipmentPossibility.indexOf(key.id) > -1}>
-                                            <TableRowColumn>{key.id}</TableRowColumn>
-                                            <TableRowColumn>{key.type}</TableRowColumn>
-                                            <TableRowColumn>{key.cost}</TableRowColumn>
+                                        <TableRow key={key} selected={TextFieldsContent.shipmentPossibility.indexOf(key) > -1}>
+                                            <TableRowColumn>{key}</TableRowColumn>
+                                            <TableRowColumn>{shipmentPossibility[key].type}</TableRowColumn>
+                                            <TableRowColumn>{shipmentPossibility[key].cost}</TableRowColumn>
                                         </TableRow>
                                     )
                                 })}

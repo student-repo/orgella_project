@@ -110,7 +110,7 @@ io.on('connection', function(socket){
 
     socket.on('SEARCH', function(data){
         console.log(data);
-        var queryQuery = "select ProductName, Category, Description, Price, ProductQuantity from offers where ProductName like '%" + data.ProductName + "%' and ";
+        var queryQuery = "select OfferID, SellerID, ProductName, Category, Description, Price, ProductQuantity from offers where ProductName like '%" + data.ProductName + "%' and ";
         if(data.PriceFrom === '' && data.PriceTo === ''){
             queryQuery += "Category like '%" + data.Category + "%'"
         }
@@ -134,6 +134,57 @@ io.on('connection', function(socket){
                 io.sockets.emit('SEARCH_RESPONSE', {res: "SEARCH_SUCCESSFUL",
                     data: result
                 });
+            }
+        });
+    });
+
+    socket.on('ADD_ORDER', function(data){
+        console.log(data);
+        connection.query("select UserID from users where Nick='" + data.UserNick + "'" , function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
+                return;
+            }
+            else{
+                var addOrderUserID = result[0].UserID;
+                var aaa = {
+                    BuyerID: addOrderUserID,
+                    SellerID: data.SellerID,
+                    TotalPrice: data.TotalPrice
+                };
+                var query1 = connection.query('insert orders set ?', aaa, function(err, result){
+                    if(err){
+                        console.error(err);
+                        io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
+                        return;
+                    }
+                    else{
+                        var orderID = query1["_results"][0]["insertId"];
+                        console.error(err);
+                        var hhh = {
+                            OrderID: orderID,
+                          Quantity: data.ProductQuantity,
+                            OfferID: data.OfferID,
+                            UnitPrice: data.UnitPrice,
+                            ShipmentID: data.ShipmentID
+                        };
+                        var query2 = connection.query('insert order_details set ?', hhh, function(err, result){
+                            if(err){
+                                console.error(err);
+                                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
+                                return;
+                            }
+                            else{
+                                console.error(err);
+                                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_SUCCESSFUL"});
+                            }
+                        });
+
+                    }
+                });
+
+
             }
         });
     });

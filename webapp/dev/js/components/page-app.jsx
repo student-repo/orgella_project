@@ -18,7 +18,8 @@ import SignInFailuteRoutes from '../routes/sign-in-failure-routes'
 import AddOffer from './add-offer';
 import AddOfferSuccessfullyRoutes from '../routes/add-offer-successfully-routes';
 import AddOfferNotAllowedRoutes from '../routes/add-offer-not-alloved-routes';
-import SingleOfferRoutes from '../routes/single-offer-routes'
+import SingleOffer from '../components/single-offer'
+import orderSuccessfullyRouter from '../routes/order-successfully-router'
 
 
 var socket = io.connect('http://localhost:3200/');
@@ -55,6 +56,11 @@ const AddOfferWithProps =(
     </Route>
 );
 
+const SingleOfferWithProps = (
+    <Route path="single-offer">
+        <IndexRoute component={() => <SingleOffer socket={socket}/>}/>
+    </Route>
+);
 
 const enhancedHistory = syncHistoryWithStore(browserHistory, store);
 
@@ -71,7 +77,8 @@ const PageApp = () => (
                 {AddOfferWithProps}
                 {AddOfferSuccessfullyRoutes}
                 {AddOfferNotAllowedRoutes}
-                {SingleOfferRoutes}
+                {SingleOfferWithProps}
+                {orderSuccessfullyRouter}
 
             </Route>
         </Router>

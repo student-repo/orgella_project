@@ -1,20 +1,11 @@
 import React from "react";
 import {Col, Row} from "pui-react-grids";
 import * as Colors from 'material-ui/styles/colors';
-import Button from 'react-bootstrap/lib/Button'
-import * as buttonStyle from '../../scss/simple-button-css.css'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {signInTextFieldContent} from '../actions/sign-in-text-field-content'
-import TextField from 'material-ui/TextField';
 import {Link, withRouter} from "react-router";
-import {UserLogged} from '../actions/user-logged-action'
-import _ from 'underscore';
-import cookie from 'react-cookie';
 import SingleOfferImage from './single-image'
 import {addOfferTextFieldContent} from '../actions/add-offer-text-fields-content-action'
-import {addOfferStatus} from '../actions/add-offer-status';
-import {browserHistory} from "react-router";
 import HorizontalLinearStepper from "./horizontal-linear-stepper";
 
 const codeStyle = {
@@ -69,7 +60,7 @@ const SingleOffer = ({socket, offerDisplayInfo}) => {
                 </Col>
             </Row>
             <Row>
-                <HorizontalLinearStepper />
+                <HorizontalLinearStepper socket={socket}/>
             </Row>
         </div>)
 };

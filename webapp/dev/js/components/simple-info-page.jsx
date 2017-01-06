@@ -54,7 +54,3 @@ const SimpleInfoPage = ({headerLabel, label, buttonLabel, buttonRedirectPath, se
 );
 
 export default SimpleInfoPage
-//
-// <Button style={buttonStyle} onClick={() => browserHistory.push({buttonRedirectPath})}>{buttonLabel}</Button>
-//
-// <Button style={buttonStyle} onClick={() => foo(buttonRedirectPath)}>{buttonLabel}</Button>

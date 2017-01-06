@@ -12,7 +12,7 @@ const updateOrderSelectFields= (value, TextFieldContent, orderSelectFieldsUpdate
     orderSelectFieldsUpdate(newTextFieldsContent);
 };
 
-
+// onChange={(event, key, payload) => updateOrderSelectFields(payload, orderSelectFields, orderSelectFieldsUpdate, type)}>
 const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuantity, orderSelectFieldsUpdate, orderSelectFields) => {
     if(type === "shipmentType"){
         return (
@@ -21,9 +21,9 @@ const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuan
                 value={orderSelectFields[type]}
                 floatingLabelText={floatingLabel}
                 onChange={(event, key, payload) => updateOrderSelectFields(payload, orderSelectFields, orderSelectFieldsUpdate, type)}>
-                {shipmentPossibility.map(key => {
+                {_.keys(shipmentPossibility).map(key => {
                     return (
-                        <MenuItem value={key.id} key={key.id} primaryText={key.type + " $" + key.cost} />
+                        <MenuItem value={key} key={key} primaryText={shipmentPossibility[key].type + " $" + shipmentPossibility[key].cost} />
                     )
                 })}
             </SelectField>

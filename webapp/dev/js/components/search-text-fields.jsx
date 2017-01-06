@@ -144,14 +144,3 @@ function matchDispatchToProps(dispatch){
         currentSearchUpdate: currentSearch}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(SearchTextFields));
-
-//
-// <SingleOfferImage price={entry.Price} description={entry.description} withDescription={true} />
-
-
-
-// export default SearchTextFields;
-
-// <Button bsStyle="success">Primary</Button>
-
-// <Button style={buttonStyle} onClick={() => getOffersFromDatabase(socket, TextFieldsContent)}>Search</Button>

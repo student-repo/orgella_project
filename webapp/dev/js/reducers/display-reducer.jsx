@@ -29,49 +29,42 @@ export const initialDisplayReducer = {
         ProductName: '',
         Category: '',
         PriceFrom: '',
-        PriceTo: ''
+        PriceTo: '',
     },
     currentSearch: [],
     singleOfferDisplayInfo: {
         ProductName: '',
         Price: '',
         ProductQuantity: '',
-        Description: ''
+        Description: '',
+        OfferID: '',
+        SellerID: ''
     },
-    shipmentPossibility: [
-        {
-            id: 0,
+    shipmentPossibility: {
+        0: {
             type: "PostOffice",
             cost: 14
         },
-        {
-            id: 1,
+        1: {
             type: "Royal Mail",
             cost: 20
         },
-        {
-            id: 2,
+        2: {
             type: "DHL",
             cost: 10
         },
-        {
-            id: 3,
+        3: {
             type: "OrgellaInPost",
             cost: 2
         },
-        {
-            id: 4,
+        4: {
             type: "United States Postal Service",
             cost: 12
         }
-    ],
+    },
     orderSelectFields: {
-        quantity: 1,
-        shipmentType: {
-            id: 3,
-            type: "OrgellaInPost",
-            cost: 2
-        }
+        quantity: '',
+        shipmentType: ''
     }
 };
 
