@@ -12,7 +12,7 @@ import {Row, Col} from "pui-react-grids";
 import * as Colors from 'material-ui/styles/colors';
 import {currentSearch} from '../actions/current-search-acction'
 import SingleOfferImage from './single-image'
-
+import LazyLoad from 'react-lazyload';
 
 const style = {
     margin: 12,
@@ -125,7 +125,11 @@ const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket,
         <div>
             {currentSearch.map(key => {
                 return (
+                    <div key={Math.random()}>
+                        <LazyLoad height={50} key={Math.random()}>
                     <SingleOfferImage offerInfo={key} withDescription={true} key={Math.random()} socket={socket} image="no-image3.png"/>
+                    </LazyLoad>
+                        </div>
                 )
             })}
         </div>
