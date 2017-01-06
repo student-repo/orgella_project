@@ -38,6 +38,7 @@ const cookieSignIn = (socket, usrlog,fff) => {
                 }
             }
         });
+        console.log("password: " + cookie.load("password"));
     }
 };
 

@@ -24,5 +24,34 @@ create database if not exists orgella;
 
 
 
+--drop procedure if exists generate_offer_table;
+--delimiter //
+--
+--CREATE procedure orgella.generate_offer_table()
+--wholeblock:BEGIN
+--
+--  declare x INT default 0;
+--  SET x = 1;
+--
+--  WHILE x <= 50 DO
+--   insert into offers(SellerID, ProductName, Category, Description, Price, ProductQuantity) values (2, concat("ProductName", floor(0 + (rand() * 65535))), concat("Category",floor(0 + (rand() * 65535))), concat("Description",floor(0 + (rand() * 65535))), floor(0 + (rand() * 65)), floor(0 + (rand() * 65)));
+--    SET x = x + 1;
+--  END WHILE;
+--END//
+--
+--delimiter ;
+--
+--
+--call generate_offer_table();
 
-insert into users(Nick, FirstName, LastName, Password, PasswordSalt, Address) values ("Nick1", "FirstName1", "LastName1", "Password1", "PasswordSalt1", "Address1"), ("Nick2", "FirstName2", "LastName2", "Password2", "PasswordSalt2", "Address2"), ("Nick3", "FirstName3", "LastName3", "Password3", "PasswordSalt3", "Address3"), ("Nick4", "FirstName4", "LastName4", "Password4", "PasswordSalt4", "Address4");
+
+
+
+
+
+
+
+
+
+
+

@@ -4,11 +4,17 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {registerTextFieldContent} from '../actions/register-textfields-content'
 import _ from 'underscore';
+import md5 from 'md5'
 
 
 const updateTextFieldsState = (value, registerTextFieldContent, registerTextFieldContentUpdate, art) => {
     var newTextFieldsContent = _.clone(registerTextFieldContent);
-    newTextFieldsContent[art] = value;
+    if(art == 'password' || art == 'repeatPassword'){
+        newTextFieldsContent[art] = md5(value);
+    }
+    else{
+        newTextFieldsContent[art] = value;
+    }
     registerTextFieldContentUpdate(newTextFieldsContent);
 };
 
