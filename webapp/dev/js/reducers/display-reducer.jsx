@@ -40,28 +40,28 @@ export const initialDisplayReducer = {
         OfferID: '',
         SellerID: ''
     },
-    shipmentPossibility: {
-        0: {
+    shipmentPossibility: [
+        {
             type: "PostOffice",
             cost: 14
         },
-        1: {
+        {
             type: "Royal Mail",
             cost: 20
         },
-        2: {
+        {
             type: "DHL",
             cost: 10
         },
-        3: {
+        {
             type: "OrgellaInPost",
             cost: 2
         },
-        4: {
+        {
             type: "United States Postal Service",
             cost: 12
         }
-    },
+    ],
     orderSelectFields: {
         quantity: '',
         shipmentType: ''
@@ -72,7 +72,9 @@ export const initialDisplayReducer = {
         LastName: '',
         Address: ''
     }],
-    singleOfferShipmentPossibilities: []
+    singleOfferShipmentPossibilities: [],
+    categories: [],
+    productNames: []
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -116,6 +118,12 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'SINGLE_OFFER_SHIPMENT_POSSIBILITIES':
             return {...displayState, singleOfferShipmentPossibilities: action.payload};
+
+        case 'PRODUCT_NAMES':
+            return {...displayState, productNames: action.payload};
+
+        case 'CATEGORIES':
+            return {...displayState, categories: action.payload};
 
         case 'CLEAR_STORE':
             return initialDisplayReducer;

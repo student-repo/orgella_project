@@ -16,6 +16,8 @@ import cookie from 'react-cookie';
 import {myAccountData} from '../actions/my-account-action'
 import {clearStore} from '../actions/clear-store-action'
 import {currentSearch} from '../actions/current-search-acction'
+import {allCategories} from '../actions/all-categories-action'
+import {allProductNames} from '../actions/all-product-names-action'
 
 
 
@@ -78,18 +80,21 @@ const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router) => 
     });
 };
 
-const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, UserLogged, myAccountDataUpdate, clearStore, currentSearchUpdate}) => {
-    // console.log(TextFieldsContent);
+const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat,
+    UserLogged, myAccountDataUpdate, clearStore, currentSearchUpdate, currentSearch, allProductNamesUpdate, allCategoriesUpdate}) => {
     socket.on('INITIAL_DATA', function(data){
         if(_.isUndefined(data.data)){
             currentSearchUpdate([]);
+            allProductNamesUpdate([]);
+            allCategoriesUpdate([]);
         }
         else{
             currentSearchUpdate(data.data);
+            allProductNamesUpdate(_.keys(_.indexBy(data.data, "ProductName")));
+            allCategoriesUpdate(_.keys(_.indexBy(data.data, "Category")));
         }
     });
     cookieSignIn(socket, UserLogged, userLoggedStat);
-
     return (
         <div>
             <AppBar
@@ -157,7 +162,8 @@ function mapStateToProps(state) {
     console.log("STATE STATE");
     console.log(state);
     return {
-        userLoggedStat: state.display.UserLogged
+        userLoggedStat: state.display.UserLogged,
+        currentSearch: state.display.currentSearch
     };
 }
 
@@ -165,6 +171,8 @@ function matchDispatchToProps(dispatch){
     return bindActionCreators({UserLogged: UserLogged,
         myAccountDataUpdate: myAccountData,
         clearStore: clearStore,
-        currentSearchUpdate: currentSearch}, dispatch);
+        currentSearchUpdate: currentSearch,
+        allProductNamesUpdate: allProductNames,
+    allCategoriesUpdate: allCategories}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(ApplicationBarDisplayer));

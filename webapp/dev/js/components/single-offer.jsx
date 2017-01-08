@@ -49,6 +49,9 @@ const SingleOffer = ({socket, offerDisplayInfo, UserLogged}) => {
                     <font style={categoryStyle}>Product Name: </font>
                     <font style={infoStyle}>{offerDisplayInfo.ProductName}</font>
                     <br/>
+                    <font style={categoryStyle}>Category: </font>
+                    <font style={infoStyle}>{offerDisplayInfo.Category}</font>
+                    <br/>
                     <font style={categoryStyle}>Price: </font>
                     <font style={infoStyle}>${offerDisplayInfo.Price}</font>
                     <br/>

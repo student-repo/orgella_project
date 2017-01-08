@@ -202,7 +202,7 @@ class HorizontalLinearStepper extends React.Component {
             <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
                 <Stepper activeStep={stepIndex}>
                     <Step>
-                        <StepLabel>Product Quantity</StepLabel>
+                        <StepLabel>Product Quantity And Shipment</StepLabel>
                     </Step>
                     <Step>
                         <StepLabel>Shipping Information</StepLabel>

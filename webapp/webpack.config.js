@@ -12,6 +12,11 @@ module.exports = {
     resolve: {
         extensions: ['', '.scss', '.css', '.js', '.jsx', '.json']
     },
+    // devServer: {
+    //     historyApiFallback: {
+    //         index: 'build/index.html'
+    //     }
+    // },
     module: {
         loaders: [
             {

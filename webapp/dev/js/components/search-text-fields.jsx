@@ -17,16 +17,6 @@ import LazyLoad from 'react-lazyload';
 const style = {
     margin: 12,
 };
-const colors = [
-        'Red',
-        'Orange',
-        'Yellow',
-        'Green',
-        'Blue',
-        'Purple',
-        'Black',
-        'White',
-];
 
 const codeStyle = {
     fontFamily: 'Courier New',
@@ -69,7 +59,6 @@ const getOffersFromDatabase = (socket, filterData, currentSearchUpdate) => {
 
         }
     });
-    // updateAddOfferStatus(true);
 };
 
 const isInt = (value) => {
@@ -86,15 +75,7 @@ const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, 
 };
 
 
-const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket, currentSearchUpdate, currentSearch}) => {
-    // socket.on('INITIAL_DATA', function(data){
-    //     if(_.isUndefined(data.data)){
-    //         currentSearchUpdate([]);
-    //     }
-    //     else{
-    //         currentSearchUpdate(data.data);
-    //     }
-    // });
+const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket, currentSearchUpdate, currentSearch, productNames, categories}) => {
     return (
     <div>
         <Row>
@@ -102,17 +83,19 @@ const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket,
                 floatingLabelText="Product Name"
                 filter={AutoComplete.caseInsensitiveFilter}
                 onUpdateInput={(searchText, dataSource, params) => updateTextFieldsState(searchText, TextFieldsContent, searchFieldsContentUpdate, "ProductName")}
-                dataSource={colors}
+                dataSource={productNames}
                 style={style}
                 hintText="Product Name Filed"
+                maxSearchResults={10}
             />
             <AutoComplete
                 floatingLabelText="Category"
                 hintText="Category Field"
                 filter={AutoComplete.caseInsensitiveFilter}
                 onUpdateInput={(searchText, dataSource, params) => updateTextFieldsState(searchText, TextFieldsContent, searchFieldsContentUpdate, "Category")}
-                dataSource={colors}
+                dataSource={categories}
                 style={style}
+                maxSearchResults={10}
             />
         <TextField
             floatingLabelText="Price From"
@@ -148,7 +131,9 @@ const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket,
 function mapStateToProps(state) {
     return {
         TextFieldsContent: state.display.SearchTextFieldsContent,
-        currentSearch: state.display.currentSearch
+        currentSearch: state.display.currentSearch,
+        categories: state.display.categories,
+        productNames: state.display.productNames
     };
 }
 
