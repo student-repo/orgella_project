@@ -86,7 +86,16 @@ const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, 
 };
 
 
-const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket, currentSearchUpdate, currentSearch}) => (
+const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket, currentSearchUpdate, currentSearch}) => {
+    // socket.on('INITIAL_DATA', function(data){
+    //     if(_.isUndefined(data.data)){
+    //         currentSearchUpdate([]);
+    //     }
+    //     else{
+    //         currentSearchUpdate(data.data);
+    //     }
+    // });
+    return (
     <div>
         <Row>
             <AutoComplete
@@ -134,7 +143,7 @@ const SearchTextFields = ({TextFieldsContent, searchFieldsContentUpdate, socket,
             })}
         </div>
     </div>
-);
+)};
 
 function mapStateToProps(state) {
     return {

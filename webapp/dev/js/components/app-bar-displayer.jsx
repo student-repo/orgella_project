@@ -14,6 +14,8 @@ import {UserLogged} from '../actions/user-logged-action'
 import _ from 'underscore';
 import cookie from 'react-cookie';
 import {myAccountData} from '../actions/my-account-action'
+import {clearStore} from '../actions/clear-store-action'
+import {currentSearch} from '../actions/current-search-acction'
 
 
 
@@ -58,6 +60,8 @@ const handleAddOffer = (router, UserLogged) => {
 
 };
 
+// <IconButton iconStyle={{color: 'white'}} onClick={() => cookieSignIn(socket, UserLogged, userLoggedStat)}>
+
 const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router) => {
     socket.emit('MY_ACCOUNT_DATA',cookie.load("nick"));
     socket.on('MY_ACCOUNT_DATA_RESPONSE', function(data){
@@ -74,8 +78,18 @@ const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router) => 
     });
 };
 
-const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, UserLogged, myAccountDataUpdate}) => {
+const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, UserLogged, myAccountDataUpdate, clearStore, currentSearchUpdate}) => {
     // console.log(TextFieldsContent);
+    socket.on('INITIAL_DATA', function(data){
+        if(_.isUndefined(data.data)){
+            currentSearchUpdate([]);
+        }
+        else{
+            currentSearchUpdate(data.data);
+        }
+    });
+    cookieSignIn(socket, UserLogged, userLoggedStat);
+
     return (
         <div>
             <AppBar
@@ -84,7 +98,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat, User
                 iconElementLeft={
                     <IconMenu
                         iconButtonElement={
-                            <IconButton iconStyle={{color: 'white'}} onClick={() => cookieSignIn(socket, UserLogged, userLoggedStat)}>
+                            <IconButton iconStyle={{color: 'white'}}>
                                 <NavigationMenu />
                             </IconButton>
                         }
@@ -149,6 +163,8 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch){
     return bindActionCreators({UserLogged: UserLogged,
-        myAccountDataUpdate: myAccountData}, dispatch);
+        myAccountDataUpdate: myAccountData,
+        clearStore: clearStore,
+        currentSearchUpdate: currentSearch}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(ApplicationBarDisplayer));

@@ -12,8 +12,20 @@ const updateOrderSelectFields= (value, TextFieldContent, orderSelectFieldsUpdate
     orderSelectFieldsUpdate(newTextFieldsContent);
 };
 
+
+// {_.keys(shipmentPossibility).map(key => {
+//     return (
+//         <MenuItem value={key} key={key} primaryText={shipmentPossibility[key].type + " $" + shipmentPossibility[key].cost} />
+//     )
+// })}
+
+// {offerShipmentPossibilities.map(key => {
+//     return (
+//         <MenuItem value={key} key={key} primaryText={shipmentPossibility[key.shipmentType].type + " $" + shipmentPossibility[key.shipmentType].cost} />
+//     )
+
 // onChange={(event, key, payload) => updateOrderSelectFields(payload, orderSelectFields, orderSelectFieldsUpdate, type)}>
-const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuantity, orderSelectFieldsUpdate, orderSelectFields) => {
+const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuantity, orderSelectFieldsUpdate, orderSelectFields, offerShipmentPossibilities) => {
     if(type === "shipmentType"){
         return (
             <SelectField
@@ -21,9 +33,11 @@ const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuan
                 value={orderSelectFields[type]}
                 floatingLabelText={floatingLabel}
                 onChange={(event, key, payload) => updateOrderSelectFields(payload, orderSelectFields, orderSelectFieldsUpdate, type)}>
-                {_.keys(shipmentPossibility).map(key => {
+                {offerShipmentPossibilities.map(key => {
+                    console.log("key - shipment - type");
+                    console.log(key.ShipmentType);
                     return (
-                        <MenuItem value={key} key={key} primaryText={shipmentPossibility[key].type + " $" + shipmentPossibility[key].cost} />
+                        <MenuItem value={key.ShipmentType} key={key.ShipmentType} primaryText={shipmentPossibility[key.ShipmentType].type + " $" + shipmentPossibility[key.ShipmentType].cost} />
                     )
                 })}
             </SelectField>
@@ -50,9 +64,9 @@ const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuan
     }
 };
 
-const DropDownMenuLongMenu = ({shipmentPossibility, floatingLabel, type, offerDisplayInfo, orderSelectFieldsUpdate, orderSelectFields}) => {
+const DropDownMenuLongMenu = ({shipmentPossibility, floatingLabel, type, offerDisplayInfo, orderSelectFieldsUpdate, orderSelectFields, offerShipmentPossibilities}) => {
     return (
-        componentToReturn(type, shipmentPossibility, floatingLabel, offerDisplayInfo.ProductQuantity, orderSelectFieldsUpdate, orderSelectFields)
+        componentToReturn(type, shipmentPossibility, floatingLabel, offerDisplayInfo.ProductQuantity, orderSelectFieldsUpdate, orderSelectFields, offerShipmentPossibilities)
         )
 };
 
@@ -60,7 +74,8 @@ function mapStateToProps(state) {
     return {
         offerDisplayInfo: state.display.singleOfferDisplayInfo,
         shipmentPossibility: state.display.shipmentPossibility,
-        orderSelectFields: state.display.orderSelectFields
+        orderSelectFields: state.display.orderSelectFields,
+        offerShipmentPossibilities: state.display.singleOfferShipmentPossibilities
 
     };
 }

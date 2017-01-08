@@ -36,12 +36,15 @@ io.on('connection', function(socket){
     // });
 
     console.log("i get connection");
-    io.sockets.emit('new message', {msg: "message, its working my gentleman",
-                                        res: foo});
-    socket.on('foo', function(data){
-        console.log(foo);
-        io.sockets.emit('new message', {msg: "message, its working my gentleman",
-            res: foo});
+
+    connection.query('select * from offers', function(err, result){
+        if(err){
+            console.error(err);
+            return;
+        }
+        else{
+            io.sockets.emit('INITIAL_DATA', {data: result});
+        }
     });
 
     socket.on('REGISTER_DATA', function(data){
@@ -282,6 +285,21 @@ io.on('connection', function(socket){
                 io.sockets.emit('MY_ACCOUNT_DATA_RESPONSE', {res: "MY_ACCOUNT_DATA_SUCCESSFUL", data: result});
             }
 
+        });
+    });
+
+    socket.on('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES', function(data){
+        connection.query('select ShipmentType from offer_details where OfferID=' + data, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_RESPONSE', {res: "GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_SUCCESSFUL"});
+                return;
+            }
+            else{
+                io.sockets.emit('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_RESPONSE', {res: "GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_SUCCESSFUL",
+                    data: result
+                });
+            }
         });
     });
 });

@@ -8,6 +8,7 @@ import {Link, withRouter} from "react-router";
 import {UserLogged} from '../actions/user-logged-action';
 import _ from 'underscore';
 import cookie from 'react-cookie';
+import {singleOfferShipmentPossibilities} from '../actions/single-offer-shipment-possibilities'
 
 const style = {
     'border': '1px solid #d9d9d9',
@@ -15,29 +16,16 @@ const style = {
     'cursor': 'pointer'
 };
 
-
-const cookieSignIn = (socket, usrlog,fff) => {
-    if(_.isUndefined(cookie.load("nick")) || _.isUndefined(cookie.load('password'))){
-        if(fff !== false){
-            usrlog(false);
+const getSingleOfferShipmentPossibilities = (socket, singleOfferShipmentPossibilities, data) => {
+        socket.emit('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES',data);
+    socket.on('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_RESPONSE', function(data){
+        if(data.res === "GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_SUCCESSFUL"){
+            singleOfferShipmentPossibilities(data.data);
         }
-    }
-    else{
-        socket.emit('CHECK_COOKIE_IDENTITY_DATA2', {nick: cookie.load("nick"),
-            password: cookie.load("password")});
-        socket.on('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', function(data){
-            if(data.res === "SIGN_IN_SUCCESSFULLY"){
-                if(fff !== true){
-                    usrlog(true);
-                }
-            }
-            else{
-                if(fff !== false){
-                    usrlog(false);
-                }
-            }
-        });
-    }
+        else{
+            console.log("get shipment possibilities not succesfull !!!");
+        }
+    });
 };
 
 const priceStyle = {
@@ -62,20 +50,21 @@ const aTagStyle = {
     cursor: "pointer"
 };
 
-const singleOfferDiaplayUpdate = (singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate) => {
-    cookieSignIn(socket, UserLoggedUpdate, UserLogged);
+const singleOfferDiaplayUpdate = (singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities) => {
+    getSingleOfferShipmentPossibilities(socket, singleOfferShipmentPossibilities, offerInfo.OfferID);
     singleOfferDisplayInfoUpdate(offerInfo);
     router.push('/single-offer');
 };
 // image="no-image3.png"
 
-const SingleOfferImage = ({socket, router, withDescription, singleOfferDisplayInfoUpdate, offerInfo, UserLogged, UserLoggedUpdate, image}) => (
+const SingleOfferImage = ({socket, router, withDescription, singleOfferDisplayInfoUpdate, offerInfo, UserLogged, UserLoggedUpdate, image, singleOfferShipmentPossibilities}) => (
     <Col md={8}>
             <img className="entryImage" onClick={withDescription ?
-                () => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate): () => console.log()}
+                () => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities): () => console.log()}
                  src={image} alt="Unable to load image" style={style}/>
         {
-            withDescription ? <div><a style={aTagStyle} onClick={() => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate)}>
+            withDescription ? <div><a style={aTagStyle}
+                                      onClick={() => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities)}>
                 <font style={priceStyle}>{'$' + offerInfo.Price}</font>
                 <font style={descriptionStyle}>{offerInfo.ProductName}</font></a></div> : <br/>
         }
@@ -96,7 +85,7 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch){
     return bindActionCreators({singleOfferDisplayInfoUpdate: singleOfferDisplayInfo,
-        UserLoggedUpdate: UserLogged}, dispatch);
+        UserLoggedUpdate: UserLogged, singleOfferShipmentPossibilities: singleOfferShipmentPossibilities}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(SingleOfferImage));
 

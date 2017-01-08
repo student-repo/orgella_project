@@ -71,7 +71,8 @@ export const initialDisplayReducer = {
         FirstName: '',
         LastName: '',
         Address: ''
-    }]
+    }],
+    singleOfferShipmentPossibilities: []
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -111,6 +112,13 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'MY_ACCOUNT_DATA':
             return {...displayState, myAccountData: action.payload};
+
+
+        case 'SINGLE_OFFER_SHIPMENT_POSSIBILITIES':
+            return {...displayState, singleOfferShipmentPossibilities: action.payload};
+
+        case 'CLEAR_STORE':
+            return initialDisplayReducer;
         default:
             return displayState;
     }
