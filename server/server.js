@@ -43,7 +43,15 @@ io.on('connection', function(socket){
             return;
         }
         else{
-            io.sockets.emit('INITIAL_DATA', {data: result});
+            connection.query('select * from shipment', function(err, result2){
+                if(err){
+                    console.error(err);
+                    return;
+                }
+                else{
+                    io.sockets.emit('INITIAL_DATA', {data: result, shipments: result2});
+                }
+            });
         }
     });
 

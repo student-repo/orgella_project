@@ -25,9 +25,30 @@ const codeStyle = {
     fontSize: '40px'
 };
 
+const fillArrayWithNumbers = (n) =>  {
+    var arr = Array.apply(null, Array(n));
+    return arr.map(function (x, i) { return i });
+};
 
-const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, art) => {
+
+const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, art, shipmentPossibilityAmount) => {
     var newTextFieldsContent = _.clone(TextFieldContent);
+    //uncomment if you want handle select all and handle enable all
+    // if(art === "shipmentPossibility"){
+    //     if(value === "none"){
+    //         newTextFieldsContent[art] = [];
+    //     }
+    //     else if( value === "all"){
+    //         newTextFieldsContent[art] = fillArrayWithNumbers(shipmentPossibilityAmount);
+    //     }
+    //     else{
+    //         newTextFieldsContent[art] = value;
+    //     }
+    // }
+    // else{
+    //     newTextFieldsContent[art] = value;
+    // }
+    //comment if you want handle select all and handle enable all
     newTextFieldsContent[art] = value;
     TextFieldContentUpdate(newTextFieldsContent);
 };
@@ -111,7 +132,7 @@ const checkCustomerInputWithDatabase = (socket, updateAddOfferStatus, addOfferDa
     // updateAddOfferStatus(true);
 };
 
-const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, router, UserLogged, userLoggedStat, addOfferStatus, updateAddOfferStatus, shipmentPossibility}) => {
+const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, router, addOfferStatus, updateAddOfferStatus, shipmentPossibility}) => {
     return (
         <div>
             <Row>
@@ -127,7 +148,7 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                     <TextField
                         floatingLabelText="Product Name"
                         hintText="Product Name Field"
-                        onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "ProductName")}
+                        onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "ProductName", shipmentPossibility.length)}
                     />
                         </Row>
 
@@ -135,7 +156,7 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                         <TextField
                             floatingLabelText="Category"
                             hintText="Category Field"
-                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "Category")}
+                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "Category", shipmentPossibility.length)}
                         />
                     </Row>
 
@@ -145,7 +166,7 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                             hintText="Product Description Field"
                             multiLine={true}
                             rows={2}
-                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "Description")}
+                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "Description", shipmentPossibility.length)}
                         />
                     </Row>
 
@@ -153,7 +174,7 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                         <TextField
                             floatingLabelText="Price"
                             hintText="Price Field"
-                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "Price")}
+                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "Price", shipmentPossibility.length)}
                         />
                     </Row>
 
@@ -161,7 +182,7 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                         <TextField
                             floatingLabelText="Product Quantity"
                             hintText="Product Quantity Field"
-                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "ProductQuantity")}
+                            onChange={(event, newValue) => updateTextFieldsState(newValue, TextFieldsContent, addOfferTextFieldContentUpdate, "ProductQuantity", shipmentPossibility.length)}
                         />
                     </Row>
                 </Col>
@@ -169,8 +190,9 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                     <Row>
                         <font style={codeStyle}>Shipment Possibility</font>
                         <br/>
-                        <Table multiSelectable={true} onRowSelection={(selectedRows) => updateTextFieldsState(selectedRows, TextFieldsContent, addOfferTextFieldContentUpdate, "shipmentPossibility")}>
-                            <TableHeader>
+                        <Table multiSelectable={true} onRowSelection={(selectedRows) => updateTextFieldsState(selectedRows, TextFieldsContent,
+                            addOfferTextFieldContentUpdate, "shipmentPossibility", shipmentPossibility.length)}>
+                            <TableHeader displaySelectAll={false} enableSelectAll={false}>
                                 <TableRow>
                                     <TableHeaderColumn>ID</TableHeaderColumn>
                                     <TableHeaderColumn>Type</TableHeaderColumn>
@@ -178,12 +200,12 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
                                 </TableRow>
                             </TableHeader>
                             <TableBody deselectOnClickaway={false}>
-                                {_.keys(shipmentPossibility).map(key => {
+                                {shipmentPossibility.map(key => {
                                     return (
-                                        <TableRow key={key} selected={TextFieldsContent.shipmentPossibility.indexOf(key) > -1}>
-                                            <TableRowColumn>{key}</TableRowColumn>
-                                            <TableRowColumn>{shipmentPossibility[key].type}</TableRowColumn>
-                                            <TableRowColumn>{shipmentPossibility[key].cost}</TableRowColumn>
+                                        <TableRow key={key.ShipmentID} selected={TextFieldsContent.shipmentPossibility.indexOf(key.ShipmentID) > -1}>
+                                            <TableRowColumn>{key.ShipmentID}</TableRowColumn>
+                                            <TableRowColumn>{key.ShipmentName}</TableRowColumn>
+                                            <TableRowColumn>{key.Price}</TableRowColumn>
                                         </TableRow>
                                     )
                                 })}
@@ -201,6 +223,8 @@ const AddOffer = ({socket, TextFieldsContent, addOfferTextFieldContentUpdate, ro
         </div>)
 };
 
+// selected={TextFieldsContent.shipmentPossibility.indexOf(key) > -1}
+
 function mapStateToProps(state) {
     return {
         TextFieldsContent: state.display.AddOfferTextFieldsContent,
@@ -217,3 +241,10 @@ function matchDispatchToProps(dispatch){
 }
 
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(AddOffer));
+
+
+//
+// <Table multiSelectable={true} onRowSelection={(selectedRows) => updateTextFieldsState(selectedRows, TextFieldsContent, addOfferTextFieldContentUpdate, "shipmentPossibility")}>
+//
+// <Table multiSelectable={true} onRowSelection={(selectedRows) => updateTextFieldsState(selectedRows, TextFieldsContent,
+//     addOfferTextFieldContentUpdate, "shipmentPossibility", shipmentPossibility.length)}>

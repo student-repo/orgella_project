@@ -18,6 +18,7 @@ import {clearStore} from '../actions/clear-store-action'
 import {currentSearch} from '../actions/current-search-acction'
 import {allCategories} from '../actions/all-categories-action'
 import {allProductNames} from '../actions/all-product-names-action'
+import {shipmentPossibilities} from '../actions/init-shipment-possibilities-action'
 
 
 
@@ -80,7 +81,7 @@ const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router) => 
     });
 };
 
-const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat,
+const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat,initShipmentPossibilities,
     UserLogged, myAccountDataUpdate, clearStore, currentSearchUpdate, currentSearch, allProductNamesUpdate, allCategoriesUpdate}) => {
     socket.on('INITIAL_DATA', function(data){
         if(_.isUndefined(data.data)){
@@ -89,6 +90,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat,
             allCategoriesUpdate([]);
         }
         else{
+            initShipmentPossibilities(data.shipments);
             currentSearchUpdate(data.data);
             allProductNamesUpdate(_.keys(_.indexBy(data.data, "ProductName")));
             allCategoriesUpdate(_.keys(_.indexBy(data.data, "Category")));
@@ -163,7 +165,7 @@ function mapStateToProps(state) {
     console.log(state);
     return {
         userLoggedStat: state.display.UserLogged,
-        currentSearch: state.display.currentSearch
+        currentSearch: state.display.currentSearch,
     };
 }
 
@@ -173,6 +175,7 @@ function matchDispatchToProps(dispatch){
         clearStore: clearStore,
         currentSearchUpdate: currentSearch,
         allProductNamesUpdate: allProductNames,
-    allCategoriesUpdate: allCategories}, dispatch);
+    allCategoriesUpdate: allCategories,
+        initShipmentPossibilities: shipmentPossibilities}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(ApplicationBarDisplayer));

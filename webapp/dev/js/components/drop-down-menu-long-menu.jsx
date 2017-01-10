@@ -37,7 +37,7 @@ const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuan
                     console.log("key - shipment - type");
                     console.log(key.ShipmentType);
                     return (
-                        <MenuItem value={key.ShipmentType} key={key.ShipmentType} primaryText={shipmentPossibility[key.ShipmentType].type + " $" + shipmentPossibility[key.ShipmentType].cost} />
+                        <MenuItem value={key.ShipmentType} key={key.ShipmentType} primaryText={shipmentPossibility[key.ShipmentType].ShipmentName + " $" + shipmentPossibility[key.ShipmentType].Price} />
                     )
                 })}
             </SelectField>

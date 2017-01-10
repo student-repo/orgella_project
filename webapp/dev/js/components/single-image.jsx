@@ -50,7 +50,7 @@ const aTagStyle = {
     cursor: "pointer"
 };
 
-const singleOfferDiaplayUpdate = (singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities) => {
+    const singleOfferDiaplayUpdate = (singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities) => {
     getSingleOfferShipmentPossibilities(socket, singleOfferShipmentPossibilities, offerInfo.OfferID);
     singleOfferDisplayInfoUpdate(offerInfo);
     router.push('/single-offer');
