@@ -34,7 +34,7 @@ const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, 
 };
 
 const foo = (socket, customerData, router, UserLogged) => {
-    socket.emit('TRY_SIGN_IN', customerData);
+    socket.emit('SIGN_IN', customerData);
     socket.on('SIGN_IN_RESPONSE', function(data){
         if(data.res === "SIGN_IN_SUCCESSFULLY"){
             // browserHistory.push('/register-successful');

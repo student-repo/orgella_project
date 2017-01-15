@@ -35,9 +35,9 @@ const componentToReturn = (type, shipmentPossibility, floatingLabel, ProductQuan
                 onChange={(event, key, payload) => updateOrderSelectFields(payload, orderSelectFields, orderSelectFieldsUpdate, type)}>
                 {offerShipmentPossibilities.map(key => {
                     console.log("key - shipment - type");
-                    console.log(key.ShipmentType);
+                    console.log(key.ShipmentID);
                     return (
-                        <MenuItem value={key.ShipmentType} key={key.ShipmentType} primaryText={shipmentPossibility[key.ShipmentType].ShipmentName + " $" + shipmentPossibility[key.ShipmentType].Price} />
+                        <MenuItem value={key.ShipmentID - 1} key={key.ShipmentID - 1} primaryText={shipmentPossibility[key.ShipmentID - 1].ShipmentName + " $" + shipmentPossibility[key.ShipmentID - 1].Price} />
                     )
                 })}
             </SelectField>

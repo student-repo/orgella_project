@@ -33,23 +33,15 @@ const fillArrayWithNumbers = (n) =>  {
 
 const updateTextFieldsState = (value, TextFieldContent, TextFieldContentUpdate, art, shipmentPossibilityAmount) => {
     var newTextFieldsContent = _.clone(TextFieldContent);
-    //uncomment if you want handle select all and handle enable all
-    // if(art === "shipmentPossibility"){
-    //     if(value === "none"){
-    //         newTextFieldsContent[art] = [];
-    //     }
-    //     else if( value === "all"){
-    //         newTextFieldsContent[art] = fillArrayWithNumbers(shipmentPossibilityAmount);
-    //     }
-    //     else{
-    //         newTextFieldsContent[art] = value;
-    //     }
-    // }
-    // else{
-    //     newTextFieldsContent[art] = value;
-    // }
-    //comment if you want handle select all and handle enable all
-    newTextFieldsContent[art] = value;
+    if(art === 'shipmentPossibility'){
+        value.forEach((key, i) =>{
+            value[i] = value[i] + 1;
+        });
+        newTextFieldsContent[art] = value
+    }
+    else{
+        newTextFieldsContent[art] = value;
+    }
     TextFieldContentUpdate(newTextFieldsContent);
 };
 

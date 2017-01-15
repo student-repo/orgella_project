@@ -4,6 +4,7 @@ var app =  express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 var md5 = require('md5');
+var _ = require('underscore');
 
 server.listen(process.env.PORT || 3200);
 console.log('Server running...');
@@ -12,7 +13,8 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '1234',
-    database: 'orgella'
+    database: 'orgella2'
+    // multipleStatements: true
 });
 
 var foo;
@@ -37,13 +39,13 @@ io.on('connection', function(socket){
 
     console.log("i get connection");
 
-    connection.query('select * from offers', function(err, result){
+    connection.query('SELECT * FROM offers', function(err, result){
         if(err){
             console.error(err);
             return;
         }
         else{
-            connection.query('select * from shipment', function(err, result2){
+            connection.query('SELECT * FROM shipments', function(err, result2){
                 if(err){
                     console.error(err);
                     return;
@@ -56,27 +58,21 @@ io.on('connection', function(socket){
     });
 
     socket.on('REGISTER_DATA', function(data){
-        console.log(data);
         var salt = Math.random().toString(36).substring(7);
         var pass = md5(data.password + salt);
-        var aaa = {
-            Nick: data.nick,
-            FirstName: data.firstName,
-            LastName: data.lastName,
-            Password: pass,
-            PasswordSalt: salt,
-            Address: data.address
-        };
-        var query = connection.query('insert into users set ?', aaa, function(err, result){
+        var query = connection.query('call addUser(?,?,?,?,?,?)', [data.nick, data.firstName, data.lastName, pass, salt, data.address], function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_NOT_SUCCESSFUL"});
                 return;
             }
-            console.error(err);
-            io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
+            else if(result[0][0].OK === 'OK'){
+                io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
+            }
+            else{
+                io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_NOT_SUCCESSFUL"});
+            }
         });
-        // io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_SUCCESSFUL"});
     });
 
 
@@ -105,7 +101,7 @@ io.on('connection', function(socket){
                 var offerID = query["_results"][0]["insertId"];
 
                 data.shipmentPossibility.map(key => {
-                    connection.query('insert into offer_details set ?', {OfferID: offerID, ShipmentType: key}, function(err, result){
+                    connection.query('insert into offer_details(OfferID, ShipmentID) values (?,?)', [offerID, key], function(err, result){
                         if(err){
                             console.error(err);
                             io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
@@ -151,7 +147,7 @@ io.on('connection', function(socket){
 
     socket.on('ADD_ORDER', function(data){
         console.log(data);
-        connection.query("select UserID from users where Nick='" + data.UserNick + "'" , function(err, result){
+        connection.query("select UserID from users where Nick=?", data.UserNick , function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
@@ -201,9 +197,9 @@ io.on('connection', function(socket){
     });
 
 
-    socket.on('TRY_SIGN_IN', function(data){
+    socket.on('SIGN_IN', function(data){
         console.log(data);
-        connection.query('select Password, PasswordSalt from users where Nick=?',data.nick, function(err, result){
+        connection.query('SELECT PasswordSalt FROM users WHERE Nick=?',data.nick, function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
@@ -211,17 +207,27 @@ io.on('connection', function(socket){
             }
             else if(result.length !== 1){
                 io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
-                console.log("login not successfully");
-            }
-            else if(result[0].Password === md5(data.password + result[0].PasswordSalt)){
-              console.log("login successfully");
-                io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_SUCCESSFULLY"});
-
+                console.log(data.nick + " login not successfully");
             }
             else{
-                io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
-                console.log("login not successfully");
-
+                connection.query('SELECT login(?,?);',[data.nick, md5(data.password + result[0].PasswordSalt)], function(err, result){
+                    if(err){
+                        console.error(err);
+                        io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                        return;
+                    }
+                    else{
+                        var loginResult = result[0][_.allKeys(result[0])[0]];
+                        if(loginResult === 1){
+                            io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_SUCCESSFULLY"});
+                            console.log(data.nick + " login successfully");
+                        }
+                        else{
+                            io.sockets.emit('SIGN_IN_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                            console.log(data.nick + " login not successfully");
+                        }
+                    }
+                });
 
             }
         });
@@ -229,7 +235,7 @@ io.on('connection', function(socket){
 
     socket.on('CHECK_COOKIE_IDENTITY_DATA', function(data){
         console.log(data);
-        connection.query('select Password, PasswordSalt from users where Nick=?',data.nick, function(err, result){
+        connection.query('select PasswordSalt from users where Nick=?',data.nick, function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
@@ -237,48 +243,30 @@ io.on('connection', function(socket){
             }
             else if(result.length !== 1){
                 io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
-                console.log("login not successfully");
-            }
-            else if(result[0].Password === md5(data.password + result[0].PasswordSalt)){
-                console.log("login successfully");
-                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_SUCCESSFULLY"});
-
+                console.log(data.nick + " login not successfully");
             }
             else{
-                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
-                console.log("login not successfully");
-
+                connection.query('select login(?,?);',[data.nick, md5(data.password + result[0].PasswordSalt)], function(err, result){
+                    if(err){
+                        console.error(err);
+                        io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                        return;
+                    }
+                    else{
+                        var loginResult = result[0][_.allKeys(result[0])[0]];
+                        if(loginResult === 1){
+                            io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_SUCCESSFULLY"});
+                            console.log(data.nick + " login successfully");
+                        }
+                        else{
+                            io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
+                            console.log(data.nick + " login not successfully");
+                        }
+                    }
+                });
 
             }
         });
-
-    });
-
-    socket.on('CHECK_COOKIE_IDENTITY_DATA2', function(data){
-        console.log(data);
-        connection.query('select Password, PasswordSalt from users where Nick=?',data.nick, function(err, result){
-            if(err){
-                console.error(err);
-                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
-                return;
-            }
-            else if(result.length !== 1){
-                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
-                console.log("login not successfully");
-            }
-            else if(result[0].Password === md5(data.password + result[0].PasswordSalt)){
-                console.log("login successfully");
-                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_SUCCESSFULLY"});
-
-            }
-            else{
-                io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE2', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
-                console.log("login not successfully");
-
-
-            }
-        });
-
     });
 
     socket.on('MY_ACCOUNT_DATA', function(data){
@@ -297,7 +285,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES', function(data){
-        connection.query('select ShipmentType from offer_details where OfferID=' + data, function(err, result){
+        connection.query('select ShipmentID from offer_details where OfferID=' + data, function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_RESPONSE', {res: "GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_SUCCESSFUL"});
