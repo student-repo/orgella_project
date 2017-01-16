@@ -21,6 +21,7 @@ import AddOfferNotAllowedRoutes from '../routes/add-offer-not-alloved-routes';
 import SingleOffer from '../components/single-offer'
 import orderSuccessfullyRouter from '../routes/order-successfully-router'
 import MyAccount from '../components/my-account'
+import FailureRoutes from '../routes/failure-foutes'
 
 
 var socket = io.connect('http://localhost:3200/');
@@ -87,6 +88,7 @@ const PageApp = () => (
                 {SingleOfferWithProps}
                 {orderSuccessfullyRouter}
                 {MyAccountWithProps}
+                {FailureRoutes}
             </Route>
         </Router>
     </Provider>

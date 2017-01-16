@@ -8,6 +8,7 @@ import {Link, withRouter} from "react-router";
 import {UserLogged} from '../actions/user-logged-action';
 import _ from 'underscore';
 import cookie from 'react-cookie';
+import {clearOrderState} from '../actions/clear-order-action'
 import {singleOfferShipmentPossibilities} from '../actions/single-offer-shipment-possibilities'
 
 const style = {
@@ -50,21 +51,25 @@ const aTagStyle = {
     cursor: "pointer"
 };
 
-    const singleOfferDiaplayUpdate = (singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities) => {
-    getSingleOfferShipmentPossibilities(socket, singleOfferShipmentPossibilities, offerInfo.OfferID);
+    const singleOfferDiaplayUpdate = (singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities, clearOrderState) => {
+    getSingleOfferShipmentPossibilities(socket, singleOfferShipmentPossibilities, offerInfo.OfferID, clearOrderState);
     singleOfferDisplayInfoUpdate(offerInfo);
+    clearOrderState();
+
     router.push('/single-offer');
 };
 // image="no-image3.png"
 
-const SingleOfferImage = ({socket, router, withDescription, singleOfferDisplayInfoUpdate, offerInfo, UserLogged, UserLoggedUpdate, image, singleOfferShipmentPossibilities}) => (
+const SingleOfferImage = ({socket, router, withDescription, singleOfferDisplayInfoUpdate, offerInfo, UserLogged,
+    UserLoggedUpdate, image, singleOfferShipmentPossibilities, clearOrderState}) => (
     <Col md={8}>
             <img className="entryImage" onClick={withDescription ?
-                () => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities): () => console.log()}
+                () => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities, clearOrderState): () => console.log()}
                  src={image} alt="Unable to load image" style={style}/>
         {
             withDescription ? <div><a style={aTagStyle}
-                                      onClick={() => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged, socket, UserLoggedUpdate, singleOfferShipmentPossibilities)}>
+                                      onClick={() => singleOfferDiaplayUpdate(singleOfferDisplayInfoUpdate, router, offerInfo, UserLogged,
+                                          socket, UserLoggedUpdate, singleOfferShipmentPossibilities, clearOrderState)}>
                 <font style={priceStyle}>{'$' + offerInfo.Price}</font>
                 <font style={descriptionStyle}>{offerInfo.ProductName}</font></a></div> : <br/>
         }
@@ -85,7 +90,8 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch){
     return bindActionCreators({singleOfferDisplayInfoUpdate: singleOfferDisplayInfo,
-        UserLoggedUpdate: UserLogged, singleOfferShipmentPossibilities: singleOfferShipmentPossibilities}, dispatch);
+        UserLoggedUpdate: UserLogged, singleOfferShipmentPossibilities: singleOfferShipmentPossibilities,
+        clearOrderState: clearOrderState}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(SingleOfferImage));
 

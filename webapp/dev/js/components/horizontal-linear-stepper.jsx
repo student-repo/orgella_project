@@ -12,6 +12,8 @@ import Checkbox from 'material-ui/Checkbox';
 import * as Colors from 'material-ui/styles/colors';
 import cookie from 'react-cookie';
 import {withRouter} from "react-router";
+import {currentSearch} from '../actions/current-search-acction'
+
 
 
 
@@ -37,8 +39,8 @@ const style = {
     margin: 12,
 };
 
-const checkCustomerInputWithDatabase = (socket, TotalPrice, Quantity, UnitPrice, OfferID, SellerID, ShipmentID, router) => {
-    var aaaa = {
+const checkCustomerInputWithDatabase = (socket, TotalPrice, Quantity, UnitPrice, OfferID, SellerID, ShipmentID, router, currentSearchUpdate) => {
+    socket.emit('ADD_ORDER', {
         TotalPrice: TotalPrice,
         UnitPrice: UnitPrice,
         ProductQuantity: Quantity,
@@ -46,16 +48,21 @@ const checkCustomerInputWithDatabase = (socket, TotalPrice, Quantity, UnitPrice,
         OfferID: OfferID,
         SellerID: SellerID,
         ShipmentID: ShipmentID
-    };
-    console.log(aaaa);
-    socket.emit('ADD_ORDER',aaaa);
+    });
     socket.on('ADD_ORDER_RESPONSE', function(data){
         if(data.res === "ADD_ORDER_SUCCESSFUL"){
+            if(_.isUndefined(data.data)){
+                currentSearchUpdate([]);
+            }
+            else{
+                currentSearchUpdate(data.data);
+            }
             console.log("add order  succesfull !!!");
             router.push('/order-successfully');
         }
         else{
             console.log("add order not succesfull !!!");
+            router.push('/failure');
             // browserHistory.push('/add-offer');
         }
     });
@@ -179,13 +186,21 @@ class HorizontalLinearStepper extends React.Component {
                         <br/>
                     </Row>
                     <Row>
-                        <font style={categoryStyle}>Shipment: </font>
-                        <font style={infoStyle}>{this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].ShipmentID}</font>
+                        <font style={categoryStyle}>Shipment company: </font>
+                        <font style={infoStyle}>{this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].ShipmentName}</font>
                         <br/>
                     </Row>
                     <Row>
                         <font style={categoryStyle}>Shipment cost: $</font>
-                        <font style={infoStyle}>{this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].Price}</font>
+                        <font style={infoStyle}>{Math.ceil(this.props.orderSelectFields.quantity /
+                            this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].MaxInParcel) *
+                        this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].Price}</font>
+                        <br/>
+                    </Row>
+                    <Row>
+                        <font style={categoryStyle}>Packet amount: </font>
+                        <font style={infoStyle}>{Math.ceil(this.props.orderSelectFields.quantity /
+                            this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].MaxInParcel)}</font>
                         <br/>
                     </Row>
                 </div>;
@@ -240,10 +255,12 @@ class HorizontalLinearStepper extends React.Component {
                                     primary={true}
                                     onTouchTap={stepIndex === 2 ? () => checkCustomerInputWithDatabase(this.props.socket,
                                         this.props.orderSelectFields.quantity * parseInt(this.props.offerDisplayInfo.Price)
-                                        + this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].Price,
+                                        + Math.ceil(this.props.orderSelectFields.quantity /
+                                            this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].MaxInParcel) *
+                                        this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].Price,
                                         this.props.orderSelectFields.quantity, this.props.offerDisplayInfo.Price, this.props.offerDisplayInfo.OfferID,
                                         this.props.offerDisplayInfo.SellerID, this.props.orderSelectFields.shipmentType,
-                                    this.props.router) : this.handleNext
+                                    this.props.router, this.props.currentSearchUpdate, this.props.clearOrderState) : this.handleNext
                                     }
                                 />
                             </div>
@@ -267,7 +284,9 @@ function mapStateToProps(state) {
 }
 
 function matchDispatchToProps(dispatch){
-    return bindActionCreators({}, dispatch);
+    return bindActionCreators({
+        currentSearchUpdate: currentSearch,
+    }, dispatch);
 }
 
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(HorizontalLinearStepper));

@@ -19,7 +19,10 @@ import {currentSearch} from '../actions/current-search-acction'
 import {allCategories} from '../actions/all-categories-action'
 import {allProductNames} from '../actions/all-product-names-action'
 import {shipmentPossibilities} from '../actions/init-shipment-possibilities-action'
-
+import {clearAddOfferTextFieldsContent} from '../actions/clear-add-offer-text-fileds-content'
+import {clearRegisterFieldsContent} from '../actions/clear-register-text-fields'
+import {clearMyAccountOffers} from '../actions/clear-my-account-offers'
+import {clearMyAccountOrders} from '../actions/clear-my-account-orders'
 
 
 const cookieSignIn = (socket, usrlog,fff) => {
@@ -54,18 +57,24 @@ const cookieSignIn = (socket, usrlog,fff) => {
         router.push('/');
     };
 
-const handleAddOffer = (router, UserLogged) => {
+const handleAddOffer = (router, UserLogged, clearAddOfferTextFieldsContent) => {
     if(UserLogged){
         router.push('/add-offer')
     }else{
         router.push('/add-offer-not-allowed')
     }
+    clearAddOfferTextFieldsContent();
 
+};
+
+const handleRegister = (router, clearRegisterFieldsContent) => {
+    router.push('/register');
+    clearRegisterFieldsContent();
 };
 
 // <IconButton iconStyle={{color: 'white'}} onClick={() => cookieSignIn(socket, UserLogged, userLoggedStat)}>
 
-const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router) => {
+const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router, clearMyAccountOffers, clearMyAccountOrders) => {
     socket.emit('MY_ACCOUNT_DATA',cookie.load("nick"));
     socket.on('MY_ACCOUNT_DATA_RESPONSE', function(data){
         if(data.res === "MY_ACCOUNT_DATA_SUCCESSFUL"){
@@ -79,10 +88,13 @@ const checkCustomerIntputWithDatabase = (socket,myAccountDataUpdate, router) => 
             // browserHistory.push('/register');
         }
     });
+    clearMyAccountOffers();
+    clearMyAccountOrders();
 };
 
 const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat,initShipmentPossibilities,
-    UserLogged, myAccountDataUpdate, clearStore, currentSearchUpdate, currentSearch, allProductNamesUpdate, allCategoriesUpdate}) => {
+    UserLogged, myAccountDataUpdate, clearStore, currentSearchUpdate, currentSearch, allProductNamesUpdate,
+    allCategoriesUpdate, clearAddOfferTextFieldsContent, clearRegisterFieldsContent, clearMyAccountOffers, clearMyAccountOrders}) => {
     socket.on('INITIAL_DATA', function(data){
         if(_.isUndefined(data.data)){
             currentSearchUpdate([]);
@@ -122,17 +134,17 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat,initS
                             primaryText="My account"
                             leftIcon={<MyAccountIcon />}
                             disabled={!userLoggedStat}
-                            onTouchTap={() => checkCustomerIntputWithDatabase(socket, myAccountDataUpdate, router)}
+                            onTouchTap={() => checkCustomerIntputWithDatabase(socket, myAccountDataUpdate, router, clearMyAccountOffers, clearMyAccountOrders)}
                         />
                         <MenuItem
                             primaryText="Add offer"
                             leftIcon={<AddOfferIcon />}
-                            onTouchTap={() => handleAddOffer(router, userLoggedStat)}
+                            onTouchTap={() => handleAddOffer(router, userLoggedStat, clearAddOfferTextFieldsContent)}
                         />
                         <MenuItem
                             primaryText="Register"
                             leftIcon={<RegisterIcon />}
-                            onTouchTap={() => router.push('/register')}
+                            onTouchTap={() => handleRegister(router, clearRegisterFieldsContent)}
                         />
                         <Divider />
                         {
@@ -176,6 +188,10 @@ function matchDispatchToProps(dispatch){
         currentSearchUpdate: currentSearch,
         allProductNamesUpdate: allProductNames,
     allCategoriesUpdate: allCategories,
-        initShipmentPossibilities: shipmentPossibilities}, dispatch);
+        initShipmentPossibilities: shipmentPossibilities,
+        clearAddOfferTextFieldsContent: clearAddOfferTextFieldsContent,
+        clearRegisterFieldsContent: clearRegisterFieldsContent,
+        clearMyAccountOffers: clearMyAccountOffers,
+        clearMyAccountOrders: clearMyAccountOrders}, dispatch);
 }
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(ApplicationBarDisplayer));

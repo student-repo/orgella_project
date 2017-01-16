@@ -142,7 +142,24 @@ io.on('connection', function(socket){
                 return;
             }
             else if(result[0][0].OK === 'OK'){
-                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_SUCCESSFUL"});
+                connection.query('SELECT * FROM offers', function(err, result){
+                    if(err){
+                        console.error(err);
+                        return;
+                    }
+                    else{
+                        connection.query('SELECT * FROM shipments', function(err, result2){
+                            if(err){
+                                console.error(err);
+                                return;
+                            }
+                            else{
+                                io.sockets.emit('ADD_ORDER_RESPONSE', {data: result, res: "ADD_ORDER_SUCCESSFUL"});
+                                // io.sockets.emit('INITIAL_DATA', {data: result, shipments: result2});
+                            }
+                        });
+                    }
+                });
             }
             else{
                 io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
@@ -188,7 +205,7 @@ io.on('connection', function(socket){
 
     socket.on('CHECK_COOKIE_IDENTITY_DATA', function(data){
         console.log(data);
-        connection.query('select PasswordSalt from users where Nick=?',data.nick, function(err, result){
+        connection.query('SELECT PasswordSalt FROM users WHERE Nick=?',data.nick, function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('CHECK_COOKIE_IDENTITY_DATA_RESPONSE', {res: "SIGN_IN_NOT_SUCCESSFULLY"});
@@ -224,7 +241,7 @@ io.on('connection', function(socket){
 
     socket.on('MY_ACCOUNT_DATA', function(data){
         console.log(data);
-        connection.query('select Nick, FirstName, LastName, Address from users where Nick=?',data, function(err, result){
+        connection.query('SELECT Nick, FirstName, LastName, Address FROM users WHERE Nick=?',data, function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('MY_ACCOUNT_DATA_RESPONSE', {res: "MY_ACCOUNT_DATA_NOT_SUCCESSFUL"});
@@ -237,8 +254,44 @@ io.on('connection', function(socket){
         });
     });
 
+    socket.on('MY_ACCOUNT_OFFERS', function(data){
+        console.log(data);
+        // connection.query('SELECT ProductName, Category, Description, Price, ProductQuantity FROM offers INNER JOIN users ON offers.SellerID = users.UserID WHERE Nick=?',data, function(err, result){
+            connection.query('CALL getUserOffers(?)',[data], function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('MY_ACCOUNT_OFFERS_RESPONSE', {res: "MY_ACCOUNT_OFFERS_NOT_SUCCESSFUL"});
+                return;
+            }
+            else{
+                console.log(result);
+                io.sockets.emit('MY_ACCOUNT_OFFERS_RESPONSE', {res: "MY_ACCOUNT_OFFERS_SUCCESSFUL", data: result[0]});
+            }
+
+        });
+    });
+
+    socket.on('MY_ACCOUNT_ORDERS', function(data){
+        console.log(data);
+        // connection.query('select ProductName, TotalPrice, UnitPrice, Quantity, ShipmentName  from orders inner join order_details o  ' +
+        //     'on orders.OrderId = o.OrderID inner join offers  f on f.OfferID = o.OfferID inner join shipments s on s.ShipmentID = o.ShipmentID ' +
+        //     'inner join users on orders.BuyerID = users.UserID where Nick =?',data, function(err, result){
+            connection.query('CALL getUserOrders(?)',[data], function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('MY_ACCOUNT_ORDERS_RESPONSE', {res: "MY_ACCOUNT_ORDERS_NOT_SUCCESSFUL"});
+                return;
+            }
+            else{
+                console.log(result);
+                io.sockets.emit('MY_ACCOUNT_ORDERS_RESPONSE', {res: "MY_ACCOUNT_ORDERS_SUCCESSFUL", data: result[0]});
+            }
+
+        });
+    });
+
     socket.on('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES', function(data){
-        connection.query('select ShipmentID from offer_details where OfferID=' + data, function(err, result){
+        connection.query('SELECT ShipmentID FROM offer_details WHERE OfferID=' + data, function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_RESPONSE', {res: "GET_SINGLE_OFFER_SHIPMENT_POSSIBILITIES_SUCCESSFUL"});

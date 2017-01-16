@@ -84,15 +84,6 @@ DROP TABLE IF EXISTS comments;
         REFERENCES users (UserID)
         ON DELETE CASCADE
 );
---DROP TABLE IF EXISTS shipments;
---  CREATE TABLE IF NOT EXISTS shipments (
---    ShipmentID INT(5) NOT NULL,
---    ShipmentName VARCHAR(30) NOT NULL,
---    Price INT(5) NOT NULL,
---    Description VARCHAR(100),
---    MaxInParcel INT(5) NOT NULL,
---    PRIMARY KEY(ShipmentID)
---);
 
 DROP TABLE IF EXISTS shipments;
   CREATE TABLE IF NOT EXISTS shipments (
@@ -150,6 +141,23 @@ CREATE TRIGGER after_order_details_insert
 DELIMITER ;
 
 DELIMITER $$
+
+DROP PROCEDURE IF EXISTS getUserOffers$$
+CREATE PROCEDURE getUserOffers(nickname VARCHAR(30))
+BEGIN
+    SELECT ProductName, Category, Description, Price, ProductQuantity
+    FROM offers INNER JOIN users ON offers.SellerID = users.UserID WHERE Nick = nickname;
+END $$
+
+DROP PROCEDURE IF EXISTS getUserOrders$$
+CREATE PROCEDURE getUserOrders(nickname VARCHAR(30))
+BEGIN
+    SELECT ProductName, TotalPrice, UnitPrice, Quantity, ShipmentName  FROM orders INNER JOIN order_details o
+                ON orders.OrderId = o.OrderID INNER JOIN offers  f ON f.OfferID = o.OfferID INNER JOIN shipments s ON s.ShipmentID = o.ShipmentID
+                INNER JOIN users ON orders.BuyerID = users.UserID WHERE Nick = nickname;
+END $$
+
+
 
 -- dodaje zamówienie, obliczając cene produku, używa transakcji
 DROP PROCEDURE IF EXISTS addOrder$$
@@ -306,9 +314,6 @@ SELECT * FROM offers;
 
 INSERT INTO shipments(ShipmentName, Price, MaxInParcel)
 VALUES ("PostOffice", 14, 5), ("Royal Mail", 20, 8), ("DHL", 10, 10), ("OrgellaInPost", 2, 6), ("United States Postal Service", 12, 3);
-
-
-
 
 
 

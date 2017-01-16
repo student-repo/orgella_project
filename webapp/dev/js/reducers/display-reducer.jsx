@@ -53,7 +53,9 @@ export const initialDisplayReducer = {
     }],
     singleOfferShipmentPossibilities: [],
     categories: [],
-    productNames: []
+    productNames: [],
+    myAccountOffers: [],
+    myAccountOrders: []
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -106,6 +108,29 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'SHIPMENT_POSSIBILITIES':
             return {...displayState, shipmentPossibility: action.payload};
+
+        case 'CLEAR_ORDER_STATE':
+            return {...displayState, orderSelectFields: {quantity: '', shipmentType: ''}};
+
+        case 'CLEAR_ADD_OFFER_STATE':
+            return {...displayState, AddOfferTextFieldsContent: {ProductName: '', Category: '', Description: '',
+                Price: '', ProductQuantity: '', shipmentPossibility: []}};
+
+        case 'CLEAR_REGISTER_STATE':
+            return {...displayState, RegisterTextFieldsContent: {nick: '',firstName: '', lastName: '',
+                address: '', password: '', repeatPassword: '' }};
+
+        case 'MY_ACCOUNT_OFFERS':
+            return {...displayState, myAccountOffers: action.payload};
+
+        case 'CLEAR_MY_ACCOUNT_OFFERS':
+            return {...displayState, myAccountOffers: []};
+
+        case 'MY_ACCOUNT_ORDERS':
+            return {...displayState, myAccountOrders: action.payload};
+
+        case 'CLEAR_MY_ACCOUNT_ORDERS':
+            return {...displayState, myAccountOrders: []};
 
         case 'CLEAR_STORE':
             return initialDisplayReducer;
