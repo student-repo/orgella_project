@@ -153,20 +153,20 @@ DELIMITER $$
 
 -- dodaje zamówienie, obliczając cene produku, używa transakcji
 DROP PROCEDURE IF EXISTS addOrder$$
-CREATE PROCEDURE addOrder( BuyerNick VARCHAR(30), SellerNick VARCHAR(30), OfferID INT(5), Discount INT(5), Description VARCHAR(100), Quantity INT(5), ShipmentID INT(5))
+CREATE PROCEDURE addOrder( BuyerNick VARCHAR(30), SellerID INT(5), OfferID INT(5), Discount INT(5), Quantity INT(5), ShipmentID INT(5), TotalPrice INT(5))
 BEGIN
 
 	DECLARE BuyerID INT(5);
-    DECLARE SellerID INT(5);
-    DECLARE TotalPrice INT(5);
-    DECLARE PackNO INT(5);
+--    DECLARE SellerID INT(5);
+--    DECLARE TotalPrice INT(5);
+--    DECLARE PackNO INT(5);
     DECLARE UnitPrice INT(5);
 
     SET BuyerID = (SELECT UserID FROM users WHERE Nick = BuyerNick);
-    SET SellerID = (SELECT UserID FROM users WHERE Nick = SellerNick);
-    SET PackNO = (CEILING((SELECT MaxInParcel FROM shipments s WHERE s.OfferID = OfferID AND s.ShipmentID = ShipmentID LIMIT 1)/Quantity));
+--    SET SellerID = (SELECT UserID FROM users WHERE Nick = SellerNick);
+--    SET PackNO = (CEILING((SELECT MaxInParcel FROM shipments s INNER JOIN offer_details o ON s.ShipmentID = o.ShipmentID WHERE OfferID = o.OfferID LIMIT 1)/Quantity));
     SET UnitPrice = (SELECT Price FROM offers WHERE offers.OfferID = OfferID);
-    SET TotalPrice = ( UnitPrice*Discount + PackNO * (SELECT Price FROM Shipments s WHERE s.OfferID = OfferID AND s.ShipmentID = ShipmentID LIMIT 1) );
+--    SET TotalPrice = ( UnitPrice*Discount + PackNO * (SELECT Price FROM shipments s INNER JOIN offer_details o ON s.ShipmentID = o.ShipmentID WHERE o.OfferID = OfferID LIMIT 1) );
 
     BEGIN
 
@@ -204,7 +204,8 @@ DROP PROCEDURE IF EXISTS addOffer$$
 CREATE PROCEDURE addOffer( Nick VARCHAR(30), ProductName VARCHAR(30), Category VARCHAR(30), Description VARCHAR(100),
 Price INT(5), ProductQuantity INT(5) )
 BEGIN
-	INSERT INTO offers(SellerID, ProductName, Category, Description, Price, ProductQuantity) VALUE((SELECT UserID from Users u WHERE u.Nick = Nick ), ProductName, Category, Description, Price, ProductQuantity);
+	INSERT INTO offers(SellerID, ProductName, Category, Description, Price, ProductQuantity) VALUE((SELECT UserID from users u WHERE u.Nick = Nick ), ProductName, Category, Description, Price, ProductQuantity);
+	select LAST_INSERT_ID();
 END $$
 
 -- dodaj do tej oferty rodzaj wysyłki

@@ -60,7 +60,7 @@ io.on('connection', function(socket){
     socket.on('REGISTER_DATA', function(data){
         var salt = Math.random().toString(36).substring(7);
         var pass = md5(data.password + salt);
-        var query = connection.query('call addUser(?,?,?,?,?,?)', [data.nick, data.firstName, data.lastName, pass, salt, data.address], function(err, result){
+        var query = connection.query('CALL addUser(?,?,?,?,?,?)', [data.nick, data.firstName, data.lastName, pass, salt, data.address], function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('REGISTER_RESPONSE', {res: "REGISTER_NOT_SUCCESSFUL"});
@@ -78,30 +78,17 @@ io.on('connection', function(socket){
 
     socket.on('ADD_OFFER_DATA', function(data){
         console.log(data);
-        connection.query('select UserID from users where Nick=?',data.UserNick, function(err, result){
-            if(err){
-                console.error(err);
-                io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
-                return;
-            }
-            var aaaaaa = {
-                SellerID: result[0].UserID,
-                ProductName: data.ProductName,
-                Category: data.Category,
-                Description: data.Description,
-                Price: data.Price,
-                ProductQuantity: data.ProductQuantity
-            };
-            var query = connection.query('insert into offers set ?', aaaaaa, function(err, result){
+            var query = connection.query('CALL addOffer(?,?,?,?,?,?)',
+                [data.UserNick, data.ProductName, data.Category, data.Description, data.Price, data.ProductQuantity], function(err, result){
                 if(err){
                     console.error(err);
                     io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
                     return;
                 }
-                var offerID = query["_results"][0]["insertId"];
+                var offerID = result[0][0]['LAST_INSERT_ID()'];
 
                 data.shipmentPossibility.map(key => {
-                    connection.query('insert into offer_details(OfferID, ShipmentID) values (?,?)', [offerID, key], function(err, result){
+                    connection.query('INSERT INTO offer_details(OfferID, ShipmentID) VALUES (?,?)', [offerID, key], function(err, result){
                         if(err){
                             console.error(err);
                             io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_NOT_SUCCESSFUL"});
@@ -112,8 +99,8 @@ io.on('connection', function(socket){
                 console.error(err);
                 io.sockets.emit('ADD_OFFER_RESPONSE', {res: "ADD_OFFER_SUCCESSFUL"});
             });
-        });
     });
+
 
     socket.on('SEARCH', function(data){
         console.log(data);
@@ -147,55 +134,21 @@ io.on('connection', function(socket){
 
     socket.on('ADD_ORDER', function(data){
         console.log(data);
-        connection.query("select UserID from users where Nick=?", data.UserNick , function(err, result){
+        connection.query("CALL addOrder(?,?,?,?,?,?,?)",
+            [data.UserNick, data.SellerID, data.OfferID, 0, data.ProductQuantity, data.ShipmentID, data.TotalPrice], function(err, result){
             if(err){
                 console.error(err);
                 io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
                 return;
             }
+            else if(result[0][0].OK === 'OK'){
+                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_SUCCESSFUL"});
+            }
             else{
-                var addOrderUserID = result[0].UserID;
-                var aaa = {
-                    BuyerID: addOrderUserID,
-                    SellerID: data.SellerID,
-                    TotalPrice: data.TotalPrice
-                };
-                var query1 = connection.query('insert orders set ?', aaa, function(err, result){
-                    if(err){
-                        console.error(err);
-                        io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
-                        return;
-                    }
-                    else{
-                        var orderID = query1["_results"][0]["insertId"];
-                        console.error(err);
-                        var hhh = {
-                            OrderID: orderID,
-                          Quantity: data.ProductQuantity,
-                            OfferID: data.OfferID,
-                            UnitPrice: data.UnitPrice,
-                            ShipmentID: data.ShipmentID
-                        };
-                        var query2 = connection.query('insert order_details set ?', hhh, function(err, result){
-                            if(err){
-                                console.error(err);
-                                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
-                                return;
-                            }
-                            else{
-                                console.error(err);
-                                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_SUCCESSFUL"});
-                            }
-                        });
-
-                    }
-                });
-
-
+                io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
             }
         });
     });
-
 
     socket.on('SIGN_IN', function(data){
         console.log(data);

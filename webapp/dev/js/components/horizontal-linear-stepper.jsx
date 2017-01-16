@@ -47,6 +47,7 @@ const checkCustomerInputWithDatabase = (socket, TotalPrice, Quantity, UnitPrice,
         SellerID: SellerID,
         ShipmentID: ShipmentID
     };
+    console.log(aaaa);
     socket.emit('ADD_ORDER',aaaa);
     socket.on('ADD_ORDER_RESPONSE', function(data){
         if(data.res === "ADD_ORDER_SUCCESSFUL"){
@@ -161,7 +162,7 @@ class HorizontalLinearStepper extends React.Component {
                     <Row>
                         <font style={categoryStyle}>Total Price: $</font>
                         <font style={infoStyle}>{this.props.orderSelectFields.quantity * parseInt(this.props.offerDisplayInfo.Price)
-                        + this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].cost}</font>
+                        + this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].Price}</font>
                         <br/>
                     </Row>
                     <Row>
@@ -179,12 +180,12 @@ class HorizontalLinearStepper extends React.Component {
                     </Row>
                     <Row>
                         <font style={categoryStyle}>Shipment: </font>
-                        <font style={infoStyle}>{this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].type}</font>
+                        <font style={infoStyle}>{this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].ShipmentID}</font>
                         <br/>
                     </Row>
                     <Row>
                         <font style={categoryStyle}>Shipment cost: $</font>
-                        <font style={infoStyle}>{this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].cost}</font>
+                        <font style={infoStyle}>{this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].Price}</font>
                         <br/>
                     </Row>
                 </div>;
@@ -239,7 +240,7 @@ class HorizontalLinearStepper extends React.Component {
                                     primary={true}
                                     onTouchTap={stepIndex === 2 ? () => checkCustomerInputWithDatabase(this.props.socket,
                                         this.props.orderSelectFields.quantity * parseInt(this.props.offerDisplayInfo.Price)
-                                        + this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].cost,
+                                        + this.props.shipmentPossibility[this.props.orderSelectFields.shipmentType].Price,
                                         this.props.orderSelectFields.quantity, this.props.offerDisplayInfo.Price, this.props.offerDisplayInfo.OfferID,
                                         this.props.offerDisplayInfo.SellerID, this.props.orderSelectFields.shipmentType,
                                     this.props.router) : this.handleNext
