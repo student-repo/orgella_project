@@ -346,4 +346,40 @@ io.on('connection', function(socket){
         });
     });
 
+
+    socket.on('HANDLE_SHOPPING_BASKET', function(data){
+        console.log(data);
+        connection.query("CALL addOrder(?,?,?,?,?,?,?)",
+            [data.UserNick, data.SellerID, data.OfferID, 0, data.ProductQuantity, data.ShipmentID, data.TotalPrice], function(err, result){
+                if(err){
+                    console.error(err);
+                    io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
+                    return;
+                }
+                else if(result[0][0].OK === 'OK'){
+                    connection.query('SELECT * FROM offers', function(err, result){
+                        if(err){
+                            console.error(err);
+                            return;
+                        }
+                        else{
+                            connection.query('SELECT * FROM shipments', function(err, result2){
+                                if(err){
+                                    console.error(err);
+                                    return;
+                                }
+                                else{
+                                    io.sockets.emit('ADD_ORDER_RESPONSE', {data: result, res: "ADD_ORDER_SUCCESSFUL"});
+                                    // io.sockets.emit('INITIAL_DATA', {data: result, shipments: result2});
+                                }
+                            });
+                        }
+                    });
+                }
+                else{
+                    io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
+                }
+            });
+    });
+
 });

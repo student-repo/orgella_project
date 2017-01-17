@@ -9,10 +9,14 @@ import {addOfferTextFieldContent} from '../actions/add-offer-text-fields-content
 import HorizontalLinearStepper from "./horizontal-linear-stepper";
 import TextField from 'material-ui/TextField';
 import * as buttonStyle from '../../scss/simple-button-css.css'
+import * as largeButtonStyle from '../../scss/bigger-button-css.css'
 import Button from 'react-bootstrap/lib/Button'
 import {singleOfferCommentTextField} from '../actions/single-offer-comment-textbox-action'
 import {singleOfferComments} from '../actions/single-offer-comments-action'
 import cookie from 'react-cookie';
+import {shoppingBasketContent} from '../actions/shopping-basket-content-action'
+import _ from 'underscore';
+import {shoppingBasketOrderInfo} from '../actions/shopping-basket-oreder-info-action';
 
 const codeStyle = {
     fontFamily: 'Courier New',
@@ -57,8 +61,25 @@ const updateTextFieldsState = (newValue, singleOfferCommentTextFieldUpdate) => {
     singleOfferCommentTextFieldUpdate(newValue);
 };
 
+const addToShoppingBasket = (shoppingBasketContentUpdate, offerShipmentPossibilities, shoppingBasket,
+                             offerDisplayInfo, shoppingBasketOrderInfoUpdate, shoppingBasketOrderInfo, router) => {
+    var newBasket = _.clone(shoppingBasket);
+    newBasket[offerDisplayInfo.OfferID] = {
+        shipmentPossibilities: _.clone(offerShipmentPossibilities),
+        offerInfo: _.clone(offerDisplayInfo)
+    };
+    var newOrderInfoBasket = _.clone(shoppingBasketOrderInfo);
+    newOrderInfoBasket[offerDisplayInfo.OfferID] = {
+        Shipment: "",
+        Quantity: ""
+    };
+    shoppingBasketContentUpdate(newBasket);
+    shoppingBasketOrderInfoUpdate(newOrderInfoBasket);
+    router.push("/");
+};
 
-const SingleOffer = ({socket, offerDisplayInfo, UserLogged, singleOfferComment, singleOfferCommentTextFieldUpdate, singleOfferCommentsUpdate, router, commentTextField}) => {
+const SingleOffer = ({socket, offerDisplayInfo, UserLogged, singleOfferComment, singleOfferCommentTextFieldUpdate, shoppingBasketOrderInfoUpdate,
+    singleOfferCommentsUpdate, router, commentTextField, shoppingBasketContentUpdate, offerShipmentPossibilities, shoppingBasket, shoppingBasketOrderInfo}) => {
     return (
         <div>
             <Row>
@@ -83,10 +104,17 @@ const SingleOffer = ({socket, offerDisplayInfo, UserLogged, singleOfferComment, 
                     <br/>
                     <font style={categoryStyle}>Description: </font>
                     <font style={infoStyle}>{offerDisplayInfo.Description}</font>
+                    <br/>
+                    <br/>
+                    <Button style={largeButtonStyle} onClick={() => addToShoppingBasket(shoppingBasketContentUpdate, offerShipmentPossibilities,
+                        shoppingBasket, offerDisplayInfo, shoppingBasketOrderInfoUpdate, shoppingBasketOrderInfo, router)}>Add To Basket</Button>
                 </Col>
             </Row>
             {
                 UserLogged ? <div>
+                    <Row>
+                        <font style={codeStyle}>Make a order</font>
+                        </Row>
                     <Row>
                     <HorizontalLinearStepper socket={socket}/>
                         </Row>
@@ -131,14 +159,19 @@ function mapStateToProps(state) {
         offerDisplayInfo: state.display.singleOfferDisplayInfo,
         UserLogged: state.display.UserLogged,
         singleOfferComment: state.display.singleOfferComment,
-        commentTextField: state.display.singleOfferCommentTextField
+        commentTextField: state.display.singleOfferCommentTextField,
+        offerShipmentPossibilities: state.display.singleOfferShipmentPossibilities,
+        shoppingBasket: state.display.shoppingBasket,
+        shoppingBasketOrderInfo: state.display.shoppingBasketOrderInfo
     };
 }
 
 function matchDispatchToProps(dispatch){
     return bindActionCreators({addOfferTextFieldContentUpdate: addOfferTextFieldContent,
         singleOfferCommentTextFieldUpdate: singleOfferCommentTextField,
-        singleOfferCommentsUpdate: singleOfferComments}, dispatch);
+        singleOfferCommentsUpdate: singleOfferComments,
+        shoppingBasketContentUpdate: shoppingBasketContent,
+        shoppingBasketOrderInfoUpdate: shoppingBasketOrderInfo}, dispatch);
 }
 
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(SingleOffer));

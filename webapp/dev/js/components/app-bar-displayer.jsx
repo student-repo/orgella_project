@@ -23,6 +23,7 @@ import {clearAddOfferTextFieldsContent} from '../actions/clear-add-offer-text-fi
 import {clearRegisterFieldsContent} from '../actions/clear-register-text-fields'
 import {clearMyAccountOffers} from '../actions/clear-my-account-offers'
 import {clearMyAccountOrders} from '../actions/clear-my-account-orders'
+import ShippingBasketIcon from 'material-ui/svg-icons/action/shopping-basket';
 
 
 const cookieSignIn = (socket, usrlog,fff) => {
@@ -114,6 +115,7 @@ const ApplicationBarDisplayer = ({socket, router, children, userLoggedStat,initS
             <AppBar
                 title={<Link to="/" style={{color: 'white', textDecoration: 'none'}}>Orgella</Link>}
                 style={{marginBottom: '16px'}}
+                iconElementRight={<IconButton onClick={() => router.push("/shopping-basket")}><ShippingBasketIcon /></IconButton>}
                 iconElementLeft={
                     <IconMenu
                         iconButtonElement={

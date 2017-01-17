@@ -227,6 +227,8 @@ BEGIN
     END;
 
 END $$
+
+
 -- dodaj nową oferte
 DROP PROCEDURE IF EXISTS addOffer$$
 CREATE PROCEDURE addOffer( Nick VARCHAR(30), ProductName VARCHAR(30), Category VARCHAR(30), Description VARCHAR(100),

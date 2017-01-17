@@ -57,7 +57,9 @@ export const initialDisplayReducer = {
     myAccountOffers: [],
     myAccountOrders: [],
     singleOfferComment: [],
-    singleOfferCommentTextField: ''
+    singleOfferCommentTextField: '',
+    shoppingBasket: {},
+    shoppingBasketOrderInfo: {}
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -143,6 +145,11 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
         case 'CLEAR_SINGLE_OFFER_COMMENT_TEXT_FIELD':
             return {...displayState, singleOfferCommentTextField: ''};
 
+        case 'SHOPPING_BASKET_CONTENT':
+            return {...displayState, shoppingBasket: action.payload};
+
+        case 'SHOPPING_BASKET_ORDER_INFO':
+            return {...displayState, shoppingBasketOrderInfo: action.payload};
 
         case 'CLEAR_STORE':
             return initialDisplayReducer;

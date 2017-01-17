@@ -22,6 +22,7 @@ import SingleOffer from '../components/single-offer'
 import orderSuccessfullyRouter from '../routes/order-successfully-router'
 import MyAccount from '../components/my-account'
 import FailureRoutes from '../routes/failure-foutes'
+import ShoppingBasket from './shopping-basket'
 
 
 var socket = io.connect('http://localhost:3200/');
@@ -70,6 +71,12 @@ const MyAccountWithProps = (
     </Route>
 );
 
+const ShoppingBasketWithProps = (
+    <Route path="shopping-basket">
+        <IndexRoute component={() => <ShoppingBasket socket={socket}/>}/>
+    </Route>
+);
+
 const enhancedHistory = syncHistoryWithStore(browserHistory, store);
 
 const PageApp = () => (
@@ -89,6 +96,7 @@ const PageApp = () => (
                 {orderSuccessfullyRouter}
                 {MyAccountWithProps}
                 {FailureRoutes}
+                {ShoppingBasketWithProps}
             </Route>
         </Router>
     </Provider>
