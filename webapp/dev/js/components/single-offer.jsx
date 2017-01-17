@@ -71,7 +71,8 @@ const addToShoppingBasket = (shoppingBasketContentUpdate, offerShipmentPossibili
     var newOrderInfoBasket = _.clone(shoppingBasketOrderInfo);
     newOrderInfoBasket[offerDisplayInfo.OfferID] = {
         Shipment: "",
-        Quantity: ""
+        Quantity: "",
+        offerInfo: _.clone(offerDisplayInfo)
     };
     shoppingBasketContentUpdate(newBasket);
     shoppingBasketOrderInfoUpdate(newOrderInfoBasket);

@@ -23,6 +23,8 @@ import {clearMyAccountOffers} from '../actions/clear-my-account-offers'
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import {shoppingBasketOrderInfo} from '../actions/shopping-basket-oreder-info-action'
+import {clearShoppingBasketOrderInfo} from '../actions/clear-shopping-basket-order-info-action'
+import {clearShoppingBasket} from '../actions/clear-shipping-basket-action'
 
 const codeStyle = {
     fontFamily: 'Courier New',
@@ -58,20 +60,37 @@ const codeStyleSmallerBold = {
 };
 
 
-const getMyAccountOffers = (socket,myAccountOffers, router, clearMyAccountOrders) => {
-    socket.emit('MY_ACCOUNT_OFFERS',cookie.load("nick"));
-    socket.on('MY_ACCOUNT_OFFERS_RESPONSE', function(data){
-        if(data.res === "MY_ACCOUNT_OFFERS_SUCCESSFUL"){
-            myAccountOffers(data.data);
+const sendMoreOrders = (socket,shoppingBasketOrderInfo, router, shipmentPossibility, clearShoppingBasketOrderInfo, clearShoppingBasket) => {
+    var aa = _.clone(shoppingBasketOrderInfo);
+    var kk = _.keys(aa);
+    var ooo = {};
+    for(var i = 0;i < kk.length;i++){
+        console.log("%%%%%%%%%%");
+        console.log(shipmentPossibility[aa[kk[i]]["Shipment"]].ShipmentName);
+        ooo[kk[i]] = {
+            "TotalPrice": aa[kk[i]]["Quantity"] * aa[kk[i]]["offerInfo"].Price + Math.ceil(aa[kk[i]]["Quantity"] / shipmentPossibility[aa[kk[i]]["Shipment"]].MaxInParcel) *
+            shipmentPossibility[aa[kk[i]]["Shipment"]].Price
+        };
+        ooo[kk[i]] = {
+            "TotalPrice": aa[kk[i]]["Quantity"] * aa[kk[i]]["offerInfo"].Price + Math.ceil(aa[kk[i]]["Quantity"] / shipmentPossibility[aa[kk[i]]["Shipment"]].MaxInParcel) *
+            shipmentPossibility[aa[kk[i]]["Shipment"]].Price,
+            "nick": cookie.load("nick")
+        };
+    }
+    socket.emit('HANDLE_SHOPPING_BASKET',shoppingBasketOrderInfo, ooo);
+    socket.on('HANDLE_SHOPPING_BASKET_RESPONSE', function(data){
+        if(data.res === "HANDLE_SHOPPING_BASKET_SUCCESSFUL"){
+            router.push("/");
         }
         else{
-            console.log("get offers not successful !!!");
             router.push("/failure");
-            // browserHistory.push('/register');
         }
     });
-    clearMyAccountOrders();
+    clearShoppingBasketOrderInfo();
+    clearShoppingBasket();
 };
+
+
 
 const foo = (shoppingBasketOrderInfo) =>{
     var keys = _.keys(shoppingBasketOrderInfo);
@@ -85,19 +104,20 @@ const foo = (shoppingBasketOrderInfo) =>{
 
 const updateShoppingBasketOrderInfo = (value, shoppingBasketOrderInfoUpdate, shoppingBasketOrderInfo, OfferID, type) => {
     var newBasketOrderInfo = _.clone(shoppingBasketOrderInfo);
+    var hhh = newBasketOrderInfo[OfferID]['offerInfo'];
     if(type === "Shipment"){
      var aaa = newBasketOrderInfo[OfferID]['Quantity'];
-        newBasketOrderInfo[OfferID] = {[type]: value, "Quantity": aaa}
+        newBasketOrderInfo[OfferID] = {[type]: value, "Quantity": aaa, "offerInfo": hhh}
     }
     else{
         var bbb = newBasketOrderInfo[OfferID]['Shipment'];
-        newBasketOrderInfo[OfferID] = {[type]: value, "Shipment": bbb}
+        newBasketOrderInfo[OfferID] = {[type]: value, "Shipment": bbb,"offerInfo": hhh}
     }
     shoppingBasketOrderInfoUpdate(newBasketOrderInfo);
 };
 // value={"" ? _.isUndefined(shoppingBasketOrderInfo[offerIDKey]) : shoppingBasketOrderInfo[offerIDKey]["Shipment"]}
 // value={shoppingBasketOrderInfo[offerIDKey].Shipment}
-const ShoppingBasket = ({socket, router, myAccountData, myAccountOffers, myAccountOffersLoad, myAccountOrders,
+const ShoppingBasket = ({socket, router, myAccountData, myAccountOffers, myAccountOffersLoad, myAccountOrders, clearShoppingBasketOrderInfo, clearShoppingBasket,
     myAccountOrdersLoad, clearMyAccountOffers, clearMyAccountOrders, shoppingBasket, shipmentPossibility, shoppingBasketOrderInfoUpdate, shoppingBasketOrderInfo}) => {
     return (
         <div>
@@ -156,12 +176,12 @@ const ShoppingBasket = ({socket, router, myAccountData, myAccountOffers, myAccou
                 foo(shoppingBasketOrderInfo) && _.keys(shoppingBasket).length !== 0?
                     <Row>
                         <font style={codeStyleSmallerBold}>Total: </font>
-                        <font style={codeStyleSmaller}>$ 123</font>
+                        <font style={codeStyleSmaller}>$</font>
                     </Row> : <br/>
             }
             {
                 foo(shoppingBasketOrderInfo) && _.keys(shoppingBasket).length !== 0? <Row>
-                    <Button style={buttonStyle} onClick={() => console.log("works!")}>Buy</Button>
+                    <Button style={buttonStyle} onClick={() => sendMoreOrders(socket,shoppingBasketOrderInfo, router, shipmentPossibility, clearShoppingBasketOrderInfo, clearShoppingBasket)}>Buy</Button>
                 </Row> : <br/>
         }
         </div>)
@@ -186,7 +206,9 @@ function matchDispatchToProps(dispatch){
         myAccountOrdersLoad: myAccountOrders,
         clearMyAccountOffers: clearMyAccountOffers,
         clearMyAccountOrders: clearMyAccountOrders,
-        shoppingBasketOrderInfoUpdate: shoppingBasketOrderInfo}, dispatch);
+        shoppingBasketOrderInfoUpdate: shoppingBasketOrderInfo,
+        clearShoppingBasketOrderInfo: clearShoppingBasketOrderInfo,
+        clearShoppingBasket: clearShoppingBasket}, dispatch);
 }
 
 export default withRouter (connect(mapStateToProps, matchDispatchToProps)(ShoppingBasket));

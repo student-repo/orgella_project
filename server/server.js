@@ -347,39 +347,75 @@ io.on('connection', function(socket){
     });
 
 
-    socket.on('HANDLE_SHOPPING_BASKET', function(data){
+    socket.on('HANDLE_SHOPPING_BASKET', function(data, nick){
         console.log(data);
-        connection.query("CALL addOrder(?,?,?,?,?,?,?)",
-            [data.UserNick, data.SellerID, data.OfferID, 0, data.ProductQuantity, data.ShipmentID, data.TotalPrice], function(err, result){
-                if(err){
-                    console.error(err);
-                    io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
-                    return;
-                }
-                else if(result[0][0].OK === 'OK'){
-                    connection.query('SELECT * FROM offers', function(err, result){
-                        if(err){
-                            console.error(err);
-                            return;
-                        }
-                        else{
-                            connection.query('SELECT * FROM shipments', function(err, result2){
-                                if(err){
-                                    console.error(err);
-                                    return;
-                                }
-                                else{
-                                    io.sockets.emit('ADD_ORDER_RESPONSE', {data: result, res: "ADD_ORDER_SUCCESSFUL"});
-                                    // io.sockets.emit('INITIAL_DATA', {data: result, shipments: result2});
-                                }
-                            });
-                        }
-                    });
-                }
-                else{
-                    io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
-                }
-            });
+        console.log(nick);
+        // console.log(totalPrices);
+        var kk = _.keys(data);
+        for(var i = 0; i < kk.length;i++){
+            connection.query("CALL addOrder(?,(SELECT SellerID from offers o where o.OfferID = '"+kk[i]+"' limit 1) ,?,?,?,?,?)",
+                [nick[kk[i]].nick, kk[i], 0, data[kk[i]].Quantity, data[kk[i]].Shipment + 1, nick[kk[i]].TotalPrice], function(err, result){
+                    if(err){
+                        console.error(err);
+                        io.sockets.emit('HANDLE_SHOPPING_BASKET_RESPONSE', {res: "HANDLE_SHOPPING_BASKET_NOT_SUCCESSFUL"});
+                        return;
+                    }
+                    else if(result[0][0].OK === 'OK'){
+                        connection.query('SELECT * FROM offers', function(err, result){
+                            if(err){
+                                console.error(err);
+                                return;
+                            }
+                            else{
+                                connection.query('SELECT * FROM shipments', function(err, result2){
+                                    if(err){
+                                        console.error(err);
+                                        return;
+                                    }
+                                    else{
+                                        io.sockets.emit('HANDLE_SHOPPING_BASKET_RESPONSE', {data: result, res: "HANDLE_SHOPPING_BASKET_SUCCESSFUL"});
+                                        // io.sockets.emit('INITIAL_DATA', {data: result, shipments: result2});
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else{
+                        io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
+                    }
+                });
+        }
+        // connection.query("CALL addOrder(?,?,?,?,?,?,?)",
+        //     [data.UserNick, data.SellerID, data.OfferID, 0, data.ProductQuantity, data.ShipmentID, data.TotalPrice], function(err, result){
+        //         if(err){
+        //             console.error(err);
+        //             io.sockets.emit('HANDLE_SHOPPING_BASKET_RESPONSE', {res: "HANDLE_SHOPPING_BASKET_NOT_SUCCESSFUL"});
+        //             return;
+        //         }
+        //         else if(result[0][0].OK === 'OK'){
+        //             connection.query('SELECT * FROM offers', function(err, result){
+        //                 if(err){
+        //                     console.error(err);
+        //                     return;
+        //                 }
+        //                 else{
+        //                     connection.query('SELECT * FROM shipments', function(err, result2){
+        //                         if(err){
+        //                             console.error(err);
+        //                             return;
+        //                         }
+        //                         else{
+        //                             io.sockets.emit('HANDLE_SHOPPING_BASKET_RESPONSE', {data: result, res: "HANDLE_SHOPPING_BASKET_SUCCESSFUL"});
+        //                             // io.sockets.emit('INITIAL_DATA', {data: result, shipments: result2});
+        //                         }
+        //                     });
+        //                 }
+        //             });
+        //         }
+        //         else{
+        //             io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
+        //         }
+        //     });
     });
 
 });

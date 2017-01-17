@@ -151,6 +151,12 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
         case 'SHOPPING_BASKET_ORDER_INFO':
             return {...displayState, shoppingBasketOrderInfo: action.payload};
 
+        case 'CLEAR_SHOPPING_BASKET_ORDER_INFO':
+            return {...displayState, shoppingBasketOrderInfo: {}};
+
+        case 'CLEAR_SHOPPING_BASKET':
+            return {...displayState, shoppingBasket: {}};
+
         case 'CLEAR_STORE':
             return initialDisplayReducer;
         default:
