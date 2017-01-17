@@ -66,24 +66,44 @@ DROP TABLE IF EXISTS orders;
         REFERENCES orders (OrderID)
         ON DELETE CASCADE
 );
-DROP TABLE IF EXISTS comments;
-  CREATE TABLE IF NOT EXISTS comments (
-    CommentID INT(5) NOT NULL AUTO_INCREMENT,
-    BuyerID INT(5) NOT NULL,
-    SellerID INT(5) NOT NULL,
-    PreviousCommentID INT(5),
-    FollowingCommentID INT(5),
-    OrderID INT(5) NOT NULL,
-    Content VARCHAR(30),
-    Date DATETIME NOT NULL,
-    primary key(CommentID),
-    CONSTRAINT comment_seller_id_key FOREIGN KEY (SellerID)
-        REFERENCES users (UserID)
-        ON DELETE CASCADE,
-    CONSTRAINT comment_buyer_key FOREIGN KEY (BuyerID)
-        REFERENCES users (UserID)
-        ON DELETE CASCADE
-);
+--DROP TABLE IF EXISTS comments;
+--  CREATE TABLE IF NOT EXISTS comments (
+--    CommentID INT(5) NOT NULL AUTO_INCREMENT,
+--    BuyerID INT(5) NOT NULL,
+--    SellerID INT(5) NOT NULL,
+--    PreviousCommentID INT(5),
+--    FollowingCommentID INT(5),
+--    OrderID INT(5) NOT NULL,
+--    Content VARCHAR(30),
+--    Date DATETIME NOT NULL,
+--    primary key(CommentID),
+--    CONSTRAINT comment_seller_id_key FOREIGN KEY (SellerID)
+--        REFERENCES users (UserID)
+--        ON DELETE CASCADE,
+--    CONSTRAINT comment_buyer_key FOREIGN KEY (BuyerID)
+--        REFERENCES users (UserID)
+--        ON DELETE CASCADE
+--);
+
+--DROP TABLE IF EXISTS comments;
+--  CREATE TABLE IF NOT EXISTS comments (
+--    CommentID INT(5) NOT NULL AUTO_INCREMENT,
+--    UserID INT(5) NOT NULL,
+--    OfferID INT(5) NOT NULL,
+--    PreviousCommentID INT(5),
+--    FollowingCommentID INT(5),
+--    Content VARCHAR(30),
+--    Date DATETIME NOT NULL,
+--    primary key(CommentID),
+--    CONSTRAINT comment_user_id_key FOREIGN KEY (UserID)
+--        REFERENCES users (UserID)
+--        ON DELETE CASCADE,
+--    CONSTRAINT comment_offer_key FOREIGN KEY (OfferID)
+--        REFERENCES offers (OfferID)
+--        ON DELETE CASCADE
+--);
+
+
 
 DROP TABLE IF EXISTS shipments;
   CREATE TABLE IF NOT EXISTS shipments (
@@ -215,6 +235,14 @@ BEGIN
 	INSERT INTO offers(SellerID, ProductName, Category, Description, Price, ProductQuantity) VALUE((SELECT UserID from users u WHERE u.Nick = Nick ), ProductName, Category, Description, Price, ProductQuantity);
 	select LAST_INSERT_ID();
 END $$
+
+DROP PROCEDURE IF EXISTS addComment$$
+CREATE PROCEDURE addComment( Nick VARCHAR(30), OfferID INT(5), PreviousCommentID INT(5),FollowingCommentID INT(5), Content VARCHAR(30))
+BEGIN
+    insert into comments(UserID, OfferID, Content, Date) values ((SELECT UserID from users u WHERE u.Nick = Nick ), OfferID, Content, now());
+END $$
+
+
 
 -- dodaj do tej oferty rodzaj wysyłki
 -- to mamy zmienić

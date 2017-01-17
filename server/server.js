@@ -304,11 +304,46 @@ io.on('connection', function(socket){
             }
         });
     });
+
+    socket.on('GET_SINGLE_OFFER_COMMENTS', function(data){
+        connection.query('select Content, Date, Nick from comments c inner join offers o on o.OfferID = c.OfferID inner join users u ' +
+            'on u.UserId = c.UserID where o.OfferID = ' + data, function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('GET_SINGLE_OFFER_COMMENTS_RESPONSE', {res: "GET_SINGLE_OFFER_COMMENTS_NOT_SUCCESSFUL"});
+                return;
+            }
+            else{
+                io.sockets.emit('GET_SINGLE_OFFER_COMMENTS_RESPONSE', {res: "GET_SINGLE_OFFER_COMMENTS_SUCCESSFUL",
+                    data: result
+                });
+            }
+        });
+    });
+
+    socket.on('SEND_COMMENT', function(data){
+        connection.query('call addComment(?,?,?,?,?)',[data.UserNick, data.OfferID, 0, 0, data.Content], function(err, result){
+            if(err){
+                console.error(err);
+                io.sockets.emit('SEND_COMMENT_RESPONSE', {res: "SEND_COMMENT_NOT_SUCCESSFUL"});
+                return;
+            }
+            else{
+                connection.query('select Content, Date, Nick from comments c inner join offers o on o.OfferID = c.OfferID inner join users u ' +
+                    'on u.UserId = c.UserID where o.OfferID = ' + data.OfferID, function(err, resu){
+                    if(err){
+                        console.error(err);
+                        io.sockets.emit('SEND_COMMENT_RESPONSE', {res: "SEND_COMMENT_NOT_SUCCESSFUL"});
+                        return;
+                    }
+                    else{
+                        io.sockets.emit('SEND_COMMENT_RESPONSE', {res: "SEND_COMMENT_SUCCESSFUL",
+                            data: resu
+                        });
+                    }
+                });
+            }
+        });
+    });
+
 });
-
-
-
-// io.on('foo', function(socket){
-//     console.log("i got new user");
-//     // io.sockets.emit('new new', {msg: "hohoho hohoho"})
-// });

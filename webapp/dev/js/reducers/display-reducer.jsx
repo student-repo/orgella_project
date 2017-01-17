@@ -55,7 +55,9 @@ export const initialDisplayReducer = {
     categories: [],
     productNames: [],
     myAccountOffers: [],
-    myAccountOrders: []
+    myAccountOrders: [],
+    singleOfferComment: [],
+    singleOfferCommentTextField: ''
 };
 
 const displayReducer = (displayState = initialDisplayReducer, action) => {
@@ -131,6 +133,16 @@ const displayReducer = (displayState = initialDisplayReducer, action) => {
 
         case 'CLEAR_MY_ACCOUNT_ORDERS':
             return {...displayState, myAccountOrders: []};
+
+        case 'SINGLE_OFFER_COMMENTS':
+            return {...displayState, singleOfferComment: action.payload};
+
+        case 'SINGLE_OFFER_COMMENT_TEXT_FIELD':
+            return {...displayState, singleOfferCommentTextField: action.payload};
+
+        case 'CLEAR_SINGLE_OFFER_COMMENT_TEXT_FIELD':
+            return {...displayState, singleOfferCommentTextField: ''};
+
 
         case 'CLEAR_STORE':
             return initialDisplayReducer;
