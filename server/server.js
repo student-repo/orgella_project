@@ -14,29 +14,9 @@ var connection = mysql.createConnection({
     user: 'root',
     password: '1234',
     database: 'orgella2'
-    // multipleStatements: true
 });
 
-var foo;
-
-
-// connection.connect();
-// connection.query('select * from offers', function(err, result){
-//     foo = result;
-// });
-//
-// console.log(foo);
-
-
 io.on('connection', function(socket){
-    // // var a = " where Description = 'opis'";
-    // var l = "100";
-    // // var productName = " where ProductName like '%" + l + "%'";
-    // var productName = " where Price > " + l;
-    // connection.query('select ProductName, Category, Description, Price from offers' + productName, function(err, result){
-    //     console.log(result);
-    // });
-
     console.log("i get connection");
 
     connection.query('SELECT * FROM offers', function(err, result){
@@ -256,7 +236,6 @@ io.on('connection', function(socket){
 
     socket.on('MY_ACCOUNT_OFFERS', function(data){
         console.log(data);
-        // connection.query('SELECT ProductName, Category, Description, Price, ProductQuantity FROM offers INNER JOIN users ON offers.SellerID = users.UserID WHERE Nick=?',data, function(err, result){
             connection.query('CALL getUserOffers(?)',[data], function(err, result){
             if(err){
                 console.error(err);
@@ -273,9 +252,6 @@ io.on('connection', function(socket){
 
     socket.on('MY_ACCOUNT_ORDERS', function(data){
         console.log(data);
-        // connection.query('select ProductName, TotalPrice, UnitPrice, Quantity, ShipmentName  from orders inner join order_details o  ' +
-        //     'on orders.OrderId = o.OrderID inner join offers  f on f.OfferID = o.OfferID inner join shipments s on s.ShipmentID = o.ShipmentID ' +
-        //     'inner join users on orders.BuyerID = users.UserID where Nick =?',data, function(err, result){
             connection.query('CALL getUserOrders(?)',[data], function(err, result){
             if(err){
                 console.error(err);
@@ -385,37 +361,6 @@ io.on('connection', function(socket){
                     }
                 });
         }
-        // connection.query("CALL addOrder(?,?,?,?,?,?,?)",
-        //     [data.UserNick, data.SellerID, data.OfferID, 0, data.ProductQuantity, data.ShipmentID, data.TotalPrice], function(err, result){
-        //         if(err){
-        //             console.error(err);
-        //             io.sockets.emit('HANDLE_SHOPPING_BASKET_RESPONSE', {res: "HANDLE_SHOPPING_BASKET_NOT_SUCCESSFUL"});
-        //             return;
-        //         }
-        //         else if(result[0][0].OK === 'OK'){
-        //             connection.query('SELECT * FROM offers', function(err, result){
-        //                 if(err){
-        //                     console.error(err);
-        //                     return;
-        //                 }
-        //                 else{
-        //                     connection.query('SELECT * FROM shipments', function(err, result2){
-        //                         if(err){
-        //                             console.error(err);
-        //                             return;
-        //                         }
-        //                         else{
-        //                             io.sockets.emit('HANDLE_SHOPPING_BASKET_RESPONSE', {data: result, res: "HANDLE_SHOPPING_BASKET_SUCCESSFUL"});
-        //                             // io.sockets.emit('INITIAL_DATA', {data: result, shipments: result2});
-        //                         }
-        //                     });
-        //                 }
-        //             });
-        //         }
-        //         else{
-        //             io.sockets.emit('ADD_ORDER_RESPONSE', {res: "ADD_ORDER_NOT_SUCCESSFUL"});
-        //         }
-        //     });
     });
 
 });

@@ -85,23 +85,23 @@ DROP TABLE IF EXISTS orders;
 --        ON DELETE CASCADE
 --);
 
---DROP TABLE IF EXISTS comments;
---  CREATE TABLE IF NOT EXISTS comments (
---    CommentID INT(5) NOT NULL AUTO_INCREMENT,
---    UserID INT(5) NOT NULL,
---    OfferID INT(5) NOT NULL,
---    PreviousCommentID INT(5),
---    FollowingCommentID INT(5),
---    Content VARCHAR(30),
---    Date DATETIME NOT NULL,
---    primary key(CommentID),
---    CONSTRAINT comment_user_id_key FOREIGN KEY (UserID)
---        REFERENCES users (UserID)
---        ON DELETE CASCADE,
---    CONSTRAINT comment_offer_key FOREIGN KEY (OfferID)
---        REFERENCES offers (OfferID)
---        ON DELETE CASCADE
---);
+DROP TABLE IF EXISTS comments;
+  CREATE TABLE IF NOT EXISTS comments (
+    CommentID INT(5) NOT NULL AUTO_INCREMENT,
+    UserID INT(5) NOT NULL,
+    OfferID INT(5) NOT NULL,
+    PreviousCommentID INT(5),
+    FollowingCommentID INT(5),
+    Content VARCHAR(30),
+    Date DATETIME NOT NULL,
+    primary key(CommentID),
+    CONSTRAINT comment_user_id_key FOREIGN KEY (UserID)
+        REFERENCES users (UserID)
+        ON DELETE CASCADE,
+    CONSTRAINT comment_offer_key FOREIGN KEY (OfferID)
+        REFERENCES offers (OfferID)
+        ON DELETE CASCADE
+);
 
 
 
@@ -154,6 +154,7 @@ CREATE TRIGGER after_order_details_insert
 		UPDATE offers o SET o.ProductQuantity = o.ProductQuantity - NEW.Quantity WHERE NEW.OfferID=o.OfferID;
         IF ( SELECT o.ProductQuantity FROM offers o WHERE NEW.OfferID=o.OfferID ) = 0 THEN
 		 DELETE FROM offers WHERE offers.OfferID=NEW.OfferID;
+		 DELETE FROM offer_details WHERE offer_details.OfferID = NEW.OfferID;
 		 END IF;
     END$$
 

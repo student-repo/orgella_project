@@ -65,8 +65,6 @@ const sendMoreOrders = (socket,shoppingBasketOrderInfo, router, shipmentPossibil
     var kk = _.keys(aa);
     var ooo = {};
     for(var i = 0;i < kk.length;i++){
-        console.log("%%%%%%%%%%");
-        console.log(shipmentPossibility[aa[kk[i]]["Shipment"]].ShipmentName);
         ooo[kk[i]] = {
             "TotalPrice": aa[kk[i]]["Quantity"] * aa[kk[i]]["offerInfo"].Price + Math.ceil(aa[kk[i]]["Quantity"] / shipmentPossibility[aa[kk[i]]["Shipment"]].MaxInParcel) *
             shipmentPossibility[aa[kk[i]]["Shipment"]].Price
